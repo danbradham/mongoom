@@ -7,7 +7,7 @@ class CustomDict(dict):
 
     def __init__(self, *args, **kwargs):
         super(CustomDict, self).__init__(*args, **kwargs)
-        self._type = self.__class__
+        self._type = self.__class__.__name__
         self.__dict__.update(self)
 
     def __setattr__(self, attr, value):
@@ -24,7 +24,7 @@ class CustomDict(dict):
         if not CONNECTION:
             connect()
 
-        self._id = CONNECTION[self._type].insert()
+        self._id = CONNECTION[self._type].insert(self)
 
 
 def connect():
@@ -36,12 +36,13 @@ def connect():
 
 
 if __name__ == "__main__":
-    # db = connect()
+    obj = CustomDict(
+        name="right",
+        funk="left",
+        punk=["left", "right"])
 
-    obj = CustomDict({"hello": "old pal"})
-    print obj
-    print obj.__dict__
-    obj.name = "funk"
-    print obj
-    print obj.__dict__
-    # db.custom_dict.insert(obj)
+    obj2 = CustomDict(
+        name="embeds right",
+        embed=obj)
+
+    obj2.save()
