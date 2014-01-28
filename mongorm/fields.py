@@ -24,9 +24,9 @@ class BaseField(object):
     def validate(self, obj, name):
         '''Returns a tuple (value(int), msg(str))
         Acceptable return values:
-        -1 : obj.name validates
-        0  : obj.name is missing
-        1  : obj.name is the wrong type'''
+        1: obj.name is the wrong type
+        0: obj.name validates
+       -1: obj.name is missing'''
         pass
 
 
