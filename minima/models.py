@@ -54,7 +54,7 @@ class Component(Document):
         v_index = 1 if not hasattr(self, "versions") else len("versions")
         v_name = "v{0:0>3d}".format(v_index)
         kwargs["name"] = v_name
-        kwargs["_parent"] = self.ref
+        kwargs["_parent"] = self.retf
         v = Version(*args, **kwargs)
         v.save()
         self.versions.append(v.ref)
