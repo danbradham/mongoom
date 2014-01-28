@@ -8,16 +8,14 @@ class CustomDict(dict):
     def __init__(self, *args, **kwargs):
         super(CustomDict, self).__init__(*args, **kwargs)
         self._type = self.__class__.__name__
-        self.__dict__.update(self)
 
     def __setattr__(self, attr, value):
         self[attr] = value
-        super(CustomDict, self).__setattr__(attr, value)
 
-    def __getattr__(self, attr, value):
+    def __getattr__(self, attr):
         if not hasattr(self, attr):
-            return self.get(attr)
-        super(CustomDict, self).__getattribute__(attr, value)
+            return self[attr]
+        super(CustomDict, self).__getattribute__(attr)
 
     def save(self):
         global CONNECTION
@@ -45,4 +43,7 @@ if __name__ == "__main__":
         name="embeds right",
         embed=obj)
 
-    obj2.save()
+    print obj
+    print obj2
+
+    # obj2.save()

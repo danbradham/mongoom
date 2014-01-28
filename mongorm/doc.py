@@ -1,64 +1,31 @@
 import sys
+from datetime import datetime
 from bson import DBRef
 from .fields import BaseField, ListField, Field, ValidationError
 from .utils import setdefaultattr
 from .connect import get_connection
 
 
-def is_embedded(document):
-    if type(document) in EmbeddedDocument.__subclasses__():
-        return True
-
-
-def encode(document):
-    '''Recursively replace python objects with dictionary representations
-    allowing them to be serialized with bson/json.
-
-    :param document: An object that inherits from BaseDoc
-    Returns a flattened dictionary.
-    '''
-
-    doc = document.__dict__()
-    encoded = {}
-    for field, value in doc.iteritems():
-        if is_embedded(value):
-            encoded[field] = encode(value)
-            continue
-        if isinstance(value, list):
-            encoded[field] = []
-            for item in value:
-                if is_embedded(item):
-                    encoded[field].append(encode(item))
-                    continue
-                encoded[field].append(item)
-            continue
-        encoded[field] = value
-
-    return encoded
-
-
-def conv_doc(doc):
-    doc_cls = getattr(sys.modules[__name__], doc["type"])
-    decoded = decode(doc_cls(**doc))
-    return decoded
-
-
-def decode(document):
-    for field, value in document.__dict__.iteritems():
-        if isinstance(value, dict):
-            if "type" in value:
-                document.field = conv_doc(value)
-                continue
-        if isinstance(value, list):
-            for i, item in enumerate(value):
-                if isinstance(item, dict):
-                    if "type" in value:
-                        document.field[i] = conv_doc(document, item)
-                        continue
-    return document
+def decode(v):
+    if isinstance(v, dict):
+        if "_type" in v:
+            v_cls = getattr(sys.modules[__name__], v["_type"])
+            obj = decode(v_cls(v))
+            for k, v in obj.iteritems():
+                obj[k] = decode(v)
+        return obj
+    if isinstance(v, list):
+        l = []
+        for item in v:
+            l.append(decode(v))
+        return l
+    return v
 
 
 class MetaDoc(type):
+    '''Base type for all documents. Remove class attributes of subclass
+    BaseField and add them to a class attribute named fields. The fields dict
+    can be used to validate documents to be '''
 
     def __new__(cls, clsname, bases, attrs):
 
@@ -72,39 +39,49 @@ class MetaDoc(type):
         def objects(cls):
             docs = cls.db[cls.type].find()
             for doc in docs:
-                yield cls(**doc)
+                yield decode(doc)
 
         cls_attrs["objects"] = property(objects)
+        cls_attrs["_type"] = clsname
 
         return super(MetaDoc, cls).__new__(cls, clsname, bases, cls_attrs)
 
-    def __init__(self, name, bases, attrs):
-        super(MetaDoc, self).__init__(name, bases, attrs)
-        self.type = name
 
-
-class BaseDocument(object):
+class BaseDocument(dict):
     __metaclass__ = MetaDoc
 
-    def __init__(self, **fields):
-        self.__dict__.update(fields)
-        self.db = get_connection()
+    _created = Field(datetime)
+    _date = Field(datetime)
+
+    def __init__(self, *args, **kwargs):
+        super(BaseDocument, self).__init__(*args, **kwargs)
+        self._type = self._type
+        self._created = datetime.utcnow()
+        self.__db = get_connection()
+
+    def __setattr__(self, attr, value):
+        if attr.startswith("__"):
+            super(BaseDocument, self).__setattr__(attr, value)
+        else:
+            self.__setitem__(value)
+
+    def __getattr__(self, attr):
+        if attr.startswith("__"):
+            return super(BaseDocument, self).__getattribute__(attr)
+        return self.__getitem__(attr)
 
     def remove(self):
-        self.db["_type"].remove()
+        if self._id:
+            self.__db["_type"].remove({"_id": self._id})
 
     def save(self, validate=True, *args, **kwargs):
+        self._date = datetime.utcnow()
         if validate:
             self.validate()
-        print self.__dict__
-        encoded = encode(self.__dict__)
-        print encoded
         if not hasattr(self, "_id"):
-            # _id = self.db[self.type].insert(encoded)
-            # self._id = _id
+            self._id = self.__db[self.type].insert(self)
             return
-
-        #self.db[self.type].update({"_id": self._id}, encoded)
+        self.__db[self.type].update({"_id": self._id}, self)
 
     def validate(self):
         '''Calls the validate method for each field in the classes schema.'''
@@ -132,23 +109,22 @@ class BaseDocument(object):
         return True
 
     @classmethod
-    def get(cls, **spec):
+    def find(cls, **spec):
         doc = cls.db[cls.type].find_one(spec)
-        decoded = decode(cls(**doc))
-        return decoded
+        return decode(doc)
 
 
 class Document(BaseDocument):
 
-    children = ListField(DBRef)
-    parent = Field(DBRef)
+    _children = ListField(DBRef)
+    _parent = Field(DBRef)
 
     def __iadd__(self, document):
-        setdefaultattr(self, "children", []).append(document.ref)
-        setdefaultattr(document, "parent", self.ref)
+        setdefaultattr(self, "_children", []).append(document.ref)
+        setdefaultattr(document, "_parent", self.ref)
 
     def __isub__(self, document):
-        self.children.remove(document.ref)
+        self._children.remove(document.ref)
         document.parent = None
         document.remove()
 
@@ -163,27 +139,12 @@ class Document(BaseDocument):
         return DBRef(self.type, self._id)
 
     @property
-    def components(self):
-        for child in self.children:
-            doc = self.db.dereference(child)
-            decoded = decode(getattr(sys.modules[__name__], doc["type"]), doc)
-            yield decoded
+    def children(self):
+        for child in self._children:
+            doc = self.__db.dereference(child)
+            yield decode(doc)
 
     @property
     def parent(self):
-        doc = self.db.dereference(self.parent)
-        decoded = decode(getattr(sys.modules[__name__], doc["type"]), doc)
-        return decoded
-
-
-class EmbeddedDocument(BaseDocument):
-
-    _parent = None
-
-    def __init__(self, parent, **fields):
-        self.update(fields)
-        self._parent = parent
-
-    @property
-    def parent(self):
-        return self._parent
+        doc = self.__db.dereference(self.parent)
+        return decode(doc)

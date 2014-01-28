@@ -3,16 +3,7 @@
 	[
 		{
 			"follow_symlinks": true,
-			"path": "C:\\PROJECTS\\mongorm"
+			"path": "S:\\Transfer\\dan\\PROJECTS\\mongorm"
 		}
-	],
-    "build_systems":
-    [
-        {
-            "name": "HotLine",
-            "cmd": ["C:\\ENVS\\mongorm\\Scripts\\python.exe", "-u", "$file"],
-            "file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
-            "selector": "source.python"
-        }
-    ]
+	]
 }

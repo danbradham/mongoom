@@ -4,57 +4,31 @@
 		"selected_items":
 		[
 			[
-				"if",
-				"ifmain	if __name__ == '__main__'"
+				"text-d",
+				"text-decoration"
 			]
 		]
 	},
 	"buffers":
 	[
 		{
-			"file": "/C/PROJECTS/mongorm/mongorm/__init__.py",
+			"file": "/S/Transfer/dan/PROJECTS/mongorm/tests/test_submit_meta.py",
 			"settings":
 			{
-				"buffer_size": 109,
+				"buffer_size": 2136,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "/C/PROJECTS/mongorm/tests/test_validate.py",
+			"file": "/S/Transfer/dan/PROJECTS/mongorm/mongorm/doc.py",
 			"settings":
 			{
-				"buffer_size": 986,
-				"line_ending": "Windows",
-				"name": "test_validate.py"
-			}
-		},
-		{
-			"file": "/C/PROJECTS/mongorm/requirements.txt",
-			"settings":
-			{
-				"buffer_size": 43,
+				"buffer_size": 4200,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "/C/PROJECTS/mongorm/mongorm/doc.py",
-			"settings":
-			{
-				"buffer_size": 5318,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "/C/PROJECTS/mongorm/tests/test_submit_dict.py",
-			"settings":
-			{
-				"buffer_size": 385,
-				"line_ending": "Windows",
-				"name": "test_en_decode.py"
-			}
-		},
-		{
-			"file": "/C/PROJECTS/mongorm/mongorm/connect.py",
+			"file": "/S/Transfer/dan/PROJECTS/mongorm/mongorm/connect.py",
 			"settings":
 			{
 				"buffer_size": 373,
@@ -62,10 +36,10 @@
 			}
 		},
 		{
-			"file": "/C/PROJECTS/mongorm/mongorm/fields.py",
+			"file": "/S/Transfer/dan/PROJECTS/mongorm/tests/test_submit_dict.py",
 			"settings":
 			{
-				"buffer_size": 2103,
+				"buffer_size": 951,
 				"line_ending": "Windows"
 			}
 		}
@@ -73,135 +47,83 @@
 	"build_system": "",
 	"command_palette":
 	{
-		"height": 110.0,
+		"height": 135.0,
 		"selected_items":
 		[
 			[
-				"project",
+				"projec",
 				"Project: Save As"
 			],
 			[
-				"pyth",
-				"Set Syntax: Python"
-			],
-			[
-				"projec",
-				"Project: Add Folder"
+				"project",
+				"Project: Close"
 			],
 			[
 				"proj",
 				"Project: Close"
 			],
 			[
-				"syn py",
+				"pack install",
+				"Package Control: Install Package"
+			],
+			[
+				"pack rem",
+				"Package Control: Remove Package"
+			],
+			[
+				"lint this vi",
+				"SublimeLinter: Lint This View"
+			],
+			[
+				"lint",
+				"SublimeLinter: Lint This View"
+			],
+			[
+				"package install",
+				"Package Control: Install Package"
+			],
+			[
+				"pack instal",
+				"Package Control: Install Package"
+			],
+			[
+				"pack",
+				"Package Control: Install Package"
+			],
+			[
+				"json",
+				"Set Syntax: JSON"
+			],
+			[
+				"markdown prev",
+				"Markdown Preview: Github Flavored Markdown: Preview in Browser"
+			],
+			[
+				"py",
 				"Set Syntax: Python"
 			],
 			[
-				"gitign",
-				"Gitignore: New gitignore"
+				"projc",
+				"Project: Close"
 			],
 			[
-				"git pull",
-				"Git: Pull Current Branch"
+				"markd",
+				"Set Syntax: Markdown"
+			],
+			[
+				"markdown",
+				"Set Syntax: MultiMarkdown"
+			],
+			[
+				"project clo",
+				"Project: Close"
 			],
 			[
 				"pack inst",
 				"Package Control: Install Package"
-			],
-			[
-				"projec add",
-				"Project: Add Folder"
-			],
-			[
-				"project ",
-				"Project: Close"
-			],
-			[
-				"git push",
-				"Git: Push Current Branch"
-			],
-			[
-				"git commit",
-				"Git: Commit"
-			],
-			[
-				"git stat",
-				"Git: Status"
-			],
-			[
-				"git add",
-				"Git: Add..."
-			],
-			[
-				"git",
-				"Git: Status"
-			],
-			[
-				"b",
-				"Build: Cancel"
-			],
-			[
-				"build",
-				"Build: Build"
-			],
-			[
-				"linter",
-				"Preferences: SublimeLinter Settings – Default"
-			],
-			[
-				"sublimeLinter",
-				"SublimeLinter: Previous Error"
-			],
-			[
-				"git sta",
-				"Git: Status"
-			],
-			[
-				"git status",
-				"Git: Status"
-			],
-			[
-				"snippet",
-				"Snippet: setup"
-			],
-			[
-				"snip:",
-				"Snippet: Lorem ipsum"
-			],
-			[
-				"inden",
-				"Indentation: Convert to Spaces"
-			],
-			[
-				"syn",
-				"Set Syntax: JSON"
-			],
-			[
-				"add fol",
-				"Project: Add Folder"
-			],
-			[
-				"pack remo",
-				"Package Control: Remove Package"
-			],
-			[
-				"pack disco",
-				"Package Control: Discover Packages"
-			],
-			[
-				"pack ins",
-				"Package Control: Install Package"
-			],
-			[
-				"conver",
-				"Indentation: Convert to Spaces"
-			],
-			[
-				"syn jso",
-				"Set Syntax: JSON"
 			]
 		],
-		"width": 522.0
+		"width": 562.0
 	},
 	"console":
 	{
@@ -222,77 +144,118 @@
 	},
 	"file_history":
 	[
-		"/C/Users/dbr/AppData/Roaming/Sublime Text 3/Packages/User/Preferences.sublime-settings",
-		"/C/Users/dbr/AppData/Roaming/Sublime Text 3/Packages/User/Default (Windows).sublime-keymap",
-		"/C/PROJECTS/mongorm/mongorm/core/connect.py",
-		"/C/PROJECTS/mongorm/mongorm/core/__init__.py",
-		"/C/PROJECTS/mongorm/mongorm/core/utils.py",
-		"/C/PROJECTS/mongorm/mongorm/core/doc.py",
-		"/C/PROJECTS/mongorm/mongorm/core/fields.py",
-		"/C/Users/dbr/Desktop/tmp.py",
-		"/C/PROJECTS/mongorm/requirements.txt",
-		"/C/PROJECTS/super/sublime-project/super.sublime-project",
-		"/C/Users/dbr/Desktop/something.py",
-		"/C/PROJECTS/super/.gitignore",
-		"/C/PROJECTS/super/test_singleton.py",
-		"/C/PROJECTS/super/test_argskwargs.py",
-		"/C/PROJECTS/super/PySircuits/utils.py",
-		"/C/PROJECTS/super/PySircuits/test.py",
-		"/C/PROJECTS/super/PySircuits/sircuit.py",
-		"/C/Users/dbr/AppData/Roaming/Sublime Text 3/Packages/SublimeLinter/SublimeLinter.sublime-settings",
-		"/C/PROJECTS/bnspipe/run.py",
-		"/C/Users/dbr/Desktop/property_type.py",
-		"/C/Users/dbr/Desktop/as.py",
-		"/C/Users/dbr/Desktop/set_testing.py",
-		"/C/Users/dbr/Desktop/inheritence.py",
-		"/C/Users/dbr/Desktop/test import.py",
-		"/C/Users/dbr/Desktop/genrc.py",
-		"/C/Users/dbr/Desktop/rev.py",
-		"/C/Users/dbr/Desktop/create_temp_files.py",
-		"/C/Users/dbr/Desktop/aspoda.py",
-		"/C/Users/dbr/Desktop/yuck.py",
-		"/C/PROJECTS/super/PySircuits/test2.py",
-		"/C/Users/dbr/AppData/Roaming/Sublime Text 3/Packages/Terminal/Default (Windows).sublime-keymap",
-		"/C/PROJECTS/super/PySircuits/__init__.py",
-		"/C/PROJECTS/event/event/event.py",
-		"/C/PROJECTS/event/tests.py",
-		"/C/PROJECTS/event/README.md",
-		"/C/PROJECTS/event/event/__init__.py",
-		"/C/PROJECTS/event/tests/tests.py",
-		"/C/PROJECTS/HotLine/hotline/utils.py",
-		"/C/PROJECTS/HotLine/hotline/settings/defaults/color.settings",
-		"/C/PROJECTS/HotLine/hotline/contexts/windows.py",
-		"/C/PROJECTS/HotLine/tests/test_utils.py",
-		"/C/PROJECTS/HotLine/hotline/contexts/maya.py",
-		"/C/Users/dbr/AppData/Roaming/Sublime Text 3/Packages/User/Distraction Free.sublime-settings",
-		"/C/PROJECTS/HotLine/hotline/contexts/__init__.py",
-		"/C/PROJECTS/HotLine/hotline/hotfield.py",
-		"/C/Users/dbr/AppData/Roaming/Sublime Text 3/Packages/SublimeCodeIntel/Default (Windows).sublime-keymap",
-		"/C/Users/dbr/AppData/Roaming/Sublime Text 3/Packages/SublimeCodeIntel/SublimeCodeIntel.sublime-settings",
-		"/C/PROJECTS/HotLine/run_tests.py",
-		"/C/PROJECTS/HotLine/tests/__init__.py",
-		"/C/PROJECTS/hotline.sublime-project",
-		"/C/PROJECTS/HotLine/hotline/something.py",
-		"/C/PROJECTS/HotLine/hotline/settings/user/color.settings",
-		"/C/PROJECTS/HotLine/hotline/settings/user/key.settings",
-		"/C/PROJECTS/HotLine/hotline/hotline.sublime-project",
-		"/C/PROJECTS/HotLine/hotline/__init__.py",
-		"/C/PROJECTS/HotLine/examples/winhotline.py",
-		"/C/Users/dbr/Documents/maya/2013/scripts/mayahotline.py",
-		"/C/PROJECTS/HotLine/setup.py",
-		"/C/Users/dbr/AppData/Roaming/Sublime Text 3/Packages/User/Python.sublime-settings",
-		"/C/PROJECTS/HotLine/tests/run.py",
-		"/C/Users/dbr/AppData/Roaming/Sublime Text 3/Packages/Terminal/Terminal.sublime-settings",
-		"/C/Users/dbr/AppData/Roaming/Sublime Text 3/Packages/User/Terminal.sublime-settings",
-		"/C/Users/dbr/AppData/Roaming/Sublime Text 3/Packages/User/setup.sublime-snippet",
-		"/C/Users/dbr/.ssh/id_rsa.pub",
-		"/C/PROJECTS/sandbox/history_deque.py",
-		"/C/PROJECTS/sandbox/something.py",
-		"/C/PROJECTS/sandbox/bmath.py",
-		"/C/PROJECTS/experimental/plist/read_tm.py",
-		"/C/PROJECTS/experimental/plist/python.tmLanguage",
-		"/C/PROJECTS/HotLine/hotline/data/python.lang",
-		"/C/PROJECTS/experimental/plist/python.langs"
+		"/C/Python27/Lib/distutils/cygwinccompiler.py",
+		"/S/Engineering/ENV/lib/scripts/python/alembicio/aiostyle.css",
+		"/S/Transfer/dan/ENVS/bns_env/Lib/distutils/distutils.cfg",
+		"/C/Users/dbradham/AppData/Roaming/Sublime Text 3/Packages/User/SublimeLinter.sublime-settings",
+		"/S/Transfer/dan/PROJECTS/bnspipe/bnspipe/models.py",
+		"/S/Transfer/dan/PROJECTS/bnspipe/bnspipe/views/recentwidget.py",
+		"/S/Transfer/dan/PROJECTS/bnspipe/bnspipe/data/docs/docs.htm",
+		"/S/Engineering/ENV/lib/scripts/python/djvlauncher.py",
+		"/S/Engineering/ENV/lib/userSetup/userSetup.py",
+		"/S/Engineering/ENV/lib/userSetup/setEnvironment.py",
+		"/S/Transfer/dan/PROJECTS/bnspipe/requirements.txt",
+		"/S/Transfer/dan/PROJECTS/bnspipe/bnspipe/config.py",
+		"/S/Transfer/dan/PROJECTS/bnspipe/bnspipe/controller.py",
+		"/S/Transfer/dan/PROJECTS/bnspipe-dev/settings/defaults.bnspipe-settings",
+		"/S/Transfer/dan/ENVS/bnspipe/Scripts/activate.bat",
+		"/S/Transfer/dan/projects/minima/minima/core/utils.py",
+		"/C/Users/dbradham/AppData/Roaming/Sublime Text 3/Packages/SublimeLinter/Default (Windows).sublime-keymap",
+		"/S/Transfer/dan/PROJECTS/bnspipe/bnspipe/core/eventserver.py",
+		"/S/Transfer/dan/PROJECTS/bnspipe/bnspipe/views/listitemwidget.py",
+		"/S/Transfer/dan/PROJECTS/bnspipe-dev/bnspipe/utils.py",
+		"/C/Users/dbradham/AppData/Roaming/Sublime Text 3/Packages/SublimeLinter/SublimeLinter.sublime-settings",
+		"/S/Transfer/dan/PROJECTS/bnspipe/bnspipe/views/stackedthumbwidget.py",
+		"/S/Transfer/dan/PROJECTS/bnspipe/bnspipe/workspacetemplate.py",
+		"/S/Transfer/dan/PROJECTS/bnspipe/bnspipe/actions/playblast.py",
+		"/S/Transfer/dan/projects/bnspipe/bnspipe/data/docs/docs.md",
+		"/C/Users/dbradham/AppData/Roaming/Sublime Text 3/Packages/Markdown Preview/MarkdownPreview.sublime-settings",
+		"/S/Engineering/ENV/lib/site-packages/PyQt4/qt.conf",
+		"/S/Transfer/dan/ENVS/bnspipe/Scripts/qt.conf",
+		"/S/Transfer/dan/ENVS/bnspipe/Lib/site-packages/greenlet.pyd",
+		"/S/Transfer/dan/ENVS/bnspipe/Lib/site-packages/gevent/__init__.py",
+		"/S/Transfer/dan/PROJECTS/bnspipe/bnspipe/views/commentwidget.py",
+		"/S/Transfer/dan/PROJECTS/bnspipe/bnspipe/views/checklistwidget.py",
+		"/S/Transfer/dan/PROJECTS/bnspipe/bnspipe/views/statuslabel.py",
+		"/S/Transfer/dan/PROJECTS/bnspipe/bnspipe/views/detailwidget.py",
+		"/S/Transfer/dan/PROJECTS/bnspipe/bnspipe/plugins/manageworkspace.py",
+		"/S/Transfer/dan/PROJECTS/bnspipe/bnspipe/data/css/bnspipe.css",
+		"/S/Transfer/dan/PROJECTS/bnspipe_data/mongod.cfg",
+		"/S/Transfer/dan/PROJECTS/bnspipe/bnspipe/log.py",
+		"/S/Transfer/dan/PROJECTS/bnspipe/bnspipe/views/window.py",
+		"/S/Transfer/dan/PROJECTS/bnspipe/bnspipe/core/mongo.py",
+		"/S/Transfer/dan/PROJECTS/bnspipe/bnspipe/views/views.py",
+		"/S/Transfer/dan/PROJECTS/bnspipe/bnspipe/actions/publish.py",
+		"/S/Transfer/dan/PROJECTS/bnspipe/bnspipe/plugins/makeactivity.py",
+		"/S/Transfer/dan/ENVS/gevent1.0/Lib/site-packages/pyximport/pyximport.py",
+		"/S/Transfer/dan/PROJECTS/bnspipe/bnspipe/views/toolswidget.py",
+		"/S/Transfer/dan/PROJECTS/bnspipe/bnspipe/plugins/eventplugbase.py",
+		"/S/Transfer/dan/PROJECTS/bnspipe/bnspipe/actions/increment.py",
+		"/S/Transfer/dan/PROJECTS/bnspipe/bnspipe/views/baseview.py",
+		"/S/Transfer/dan/PROJECTS/bnspipe/bnspipe/run.py",
+		"/S/Transfer/dan/PROJECTS/bnspipe/bnspipe/core/eventclient.py",
+		"/C/Users/dbradham/AppData/Roaming/Sublime Text 3/Packages/User/Default (Windows).sublime-keymap",
+		"/S/Transfer/dan/PROJECTS/bnspipe/bnspipe/core/mayaclient.py",
+		"/S/Transfer/dan/PROJECTS/bnspipe/bnspipe/utils.py",
+		"/S/Transfer/dan/PROJECTS/bnspipe/bnspipe/actions/setproject.py",
+		"/S/Transfer/dan/PROJECTS/bnspipe/bnspipe/actions/snapshot.py",
+		"/S/Transfer/dan/PROJECTS/bnspipe/bnspipe/dialog.py",
+		"/S/Transfer/dan/PROJECTS/bnspipe/bnspipe/__init__.py",
+		"/S/Transfer/dan/PROJECTS/bnspipe/setup.py",
+		"/S/Transfer/dan/PROJECTS/bnspipe/LICENSE",
+		"/S/Engineering/ENV/bnspipe/actions/increment.py",
+		"/S/Transfer/dan/PROJECTS/bnspipe/bnspipe/views/snipit.py",
+		"/S/Transfer/dan/PROJECTS/bnspipe/bnspipe/core/mayaserver.py",
+		"/S/Transfer/dan/PROJECTS/bnspipe/bnspipe/data/css/customdialog.css",
+		"/S/Transfer/dan/PROJECTS/bnspipe/bnspipe/actions/import.py",
+		"/S/Transfer/dan/PROJECTS/bnspipe/bnspipe/actions/edit.py",
+		"/S/Transfer/dan/PROJECTS/bnspipe/deploy.py",
+		"/S/Transfer/dan/PROJECTS/bnspipe/bnspipe/actions/actionbase.py",
+		"/S/Transfer/dan/PROJECTS/bnspipe/bnspipe/views/__init__.py",
+		"/S/Engineering/ENV/bnspipe/core/mayaserver.py",
+		"/S/Engineering/ENV/bnspipe/actions/actionbase.py",
+		"/C/Users/dbradham/AppData/Roaming/Sublime Text 3/Packages/Terminal/Terminal.sublime-settings",
+		"/S/Transfer/dan/PROJECTS/bnspipe/bnspipe/views/draggablescrollarea.py",
+		"/S/Engineering/ENV/bnspipe/actions/__init__.py",
+		"/S/Transfer/dan/PROJECTS/bnspipe/bnspipe/views/utils.py",
+		"/S/Transfer/dan/PROJECTS/bnspipe/bnspipe/views/thumbwidget.py",
+		"/S/Transfer/dan/PROJECTS/minima/minima/settings/user.minima-settings",
+		"/S/Transfer/dan/PROJECTS/minima/minima/settings/defaults.minima-settings",
+		"/S/Transfer/dan/PROJECTS/minima/minima/core/utils.py",
+		"/S/Transfer/dan/PROJECTS/minima/minima/core/models.py",
+		"/S/Transfer/dan/PROJECTS/minima/minima/core/translator.py",
+		"/S/Transfer/dan/PROJECTS/minima/minima/core/database.py",
+		"/S/Transfer/dan/PROJECTS/minima/minima/core/events.py",
+		"/S/Transfer/dan/PROJECTS/minima/tests/test_utils.py",
+		"/S/Transfer/dan/PROJECTS/minima/minima/core/plugrunner.py",
+		"/S/Transfer/dan/PROJECTS/minima/minima/core/sockets.py",
+		"/S/Transfer/dan/PROJECTS/minima/minima/core/server.py",
+		"/S/Transfer/dan/projects/HotLine/hotline/contexts/mayactx.py",
+		"/S/Transfer/dan/PROJECTS/minima/minima/plugins/server/__init__.py",
+		"/S/Transfer/dan/PROJECTS/minima/minima/plugins/maya/__init__.py",
+		"/S/Transfer/dan/PROJECTS/minima/minima/settings/defaults/network.minima-settings",
+		"/S/Transfer/dan/projects/minima/sublime_project/minima-work.sublime-workspace",
+		"/C/Users/dbradham/AppData/Roaming/Sublime Text 3/Packages/User/Terminal.sublime-settings",
+		"/C/Users/dbradham/AppData/Roaming/Sublime Text 3/Packages/Terminal/Default (Windows).sublime-keymap",
+		"/S/Transfer/dan/projects/minima/sublime_project/minima-work.sublime-project",
+		"/C/Users/dbradham/AppData/Roaming/Sublime Text 3/Packages/Default/Default (Windows).sublime-keymap",
+		"/C/PROJECTS/minima/minima/core/models.py",
+		"/C/PROJECTS/minima/minima/core/server.py",
+		"/C/PROJECTS/minima/minima/core/serverplugs.py",
+		"/C/PROJECTS/minima/minima/settings/defaults/dialogs.minima-settings",
+		"/C/PROJECTS/minima/minima/settings/defaults/network.minima-settings",
+		"/C/PROJECTS/minima/minima/core/utils.py",
+		"/C/PROJECTS/minima/minima/core/events.py",
+		"/C/PROJECTS/minima/minima/core/database.py",
+		"/C/Python27/Lib/site-packages/easy-install.pth",
+		"/C/Users/Administrator/AppData/Roaming/Sublime Text 3/Packages/Terminal/Terminal.sublime-settings",
+		"/C/Users/Administrator/AppData/Roaming/Sublime Text 3/Packages/User/Terminal.sublime-settings",
+		"/C/PROJECTS/minima/minima/settings/defaults/database.minima-settings",
+		"/C/PROJECTS/minima/minima/settings/defaults/eventserver.minima-settings",
+		"/C/PROJECTS/minima/minima/utils.py",
+		"/C/Users/Administrator/.ssh/id_rsa.pub",
+		"/C/Users/Administrator/AppData/Roaming/Sublime Text 3/Packages/User/Preferences.sublime-settings",
+		"/C/Users/Administrator/AppData/Roaming/Sublime Text 3/Packages/User/Distraction Free.sublime-settings"
 	],
 	"find":
 	{
@@ -307,100 +270,127 @@
 	},
 	"find_state":
 	{
-		"case_sensitive": true,
+		"case_sensitive": false,
 		"find_history":
 		[
-			"obj",
-			"__parent",
-			"__children",
-			"__",
-			"d",
-			"._type",
-			"_type",
-			"self.__dict__",
-			"v",
-			"get_database",
-			"\"_type\"",
-			".core",
-			"hasattr(obj, name)",
-			"result",
-			"        missing = False\n        incorrect_type = False",
-			"incorrect_type = True",
-			"False",
-			"correct_type",
-			"exists",
-			"False",
-			"True",
-			"wrong_types",
+			"decode",
+			"doc",
+			"document",
 			"Document",
-			"'''",
-			"Doc",
-			"Document",
-			"None",
-			"Modelupdated",
-			"unregister",
-			"EventRecv",
-			"EventReceiver started",
-			"handler",
-			"Event.create(\"",
-			"MainTwo",
-			"Main",
-			"raises",
-			"names",
-			"UI",
-			"Gui",
-			"App",
-			"Gui",
-			"test",
-			"win",
-			"buttonpushed",
-			"StartLoop",
-			"ProcessEvents",
-			"self.",
-			"HasEvent",
-			"app",
-			"self",
-			"self, ",
-			"self",
-			"assert \"Event Received\" in args",
-			"cls",
-			"test_event",
-			"an_event",
-			"create",
-			"QtGui",
-			"QRegexp",
-			"\"Python\", \"keywords\"",
-			"path",
-			"\", \"",
-			"eq_",
-			"assert",
-			"/",
-			"load_settings",
-			"PatternFactory",
-			"meth_name",
-			"load_settings",
-			"combine_user_defaults",
-			"load_keys",
-			"0",
-			"KEYS",
-			"keyset",
-			"KEYS",
-			"load_keys",
-			"format_text",
-			"next_history",
-			"prev_history",
-			"ed.",
-			"ed.handle_input",
-			"match",
-			".python",
-			"integer.",
-			",",
-			"repo_pattern",
-			" =",
-			"repository",
-			"include",
-			"patterns",
-			"<array>"
+			"CustomDict",
+			"-mno-cygwin ",
+			"data_path",
+			"mod_path",
+			"module_path",
+			"MODULE_PATH",
+			"rel_path",
+			"subprocess.",
+			"os.",
+			"os.walk",
+			"os",
+			"os.path.splitext",
+			"os.path.exists",
+			"os.rename",
+			"os.path.abspath",
+			"os.path.dirname",
+			"os.path.join",
+			"mod_path",
+			"blockquote",
+			"\\",
+			"right_clicked",
+			"'Rename",
+			"file",
+			"remove",
+			"Remove",
+			"remove",
+			"Remove",
+			"remove",
+			"do_create",
+			"'",
+			"update_page",
+			"create_checklist",
+			"200",
+			"12",
+			"active",
+			"action",
+			"background",
+			"QComboBox",
+			"Comment",
+			"comment",
+			"'Reference',",
+			"self.item_checked",
+			"standard",
+			"app_event",
+			"len(model.versions)",
+			"currentIndexChanged",
+			"event_do_broadcast",
+			"'",
+			"path_to",
+			"os",
+			"235",
+			"DetailWidget",
+			"detailwidget",
+			"self.versions",
+			"set_context",
+			"build_versions_menu",
+			"versions",
+			"diag.exec_",
+			"input_fields",
+			"Dialog",
+			"version",
+			"42",
+			"version",
+			"VERSION",
+			"version",
+			"VERSION",
+			"version",
+			"VERSION",
+			"version",
+			"VERSION",
+			"version",
+			"'",
+			"imgs",
+			"\"S:/Transfer/dan/PROJECTS/bnspipe\"",
+			"os.path.join",
+			"'",
+			"file",
+			"data",
+			"'",
+			"data",
+			"util",
+			"QSpacerItem",
+			"event_table",
+			"EVENT_TABLE",
+			"print",
+			"sys",
+			"os",
+			"show_component",
+			"do_action",
+			"copy(",
+			"copy()",
+			"'",
+			"Encode",
+			"Decode",
+			"send",
+			"Send",
+			"broadcast",
+			"Broadcast",
+			"EventReceived",
+			"data",
+			"BACKEND",
+			"self.connection",
+			"self.con",
+			")",
+			"(",
+			"join",
+			"os.path.",
+			"os.path.join",
+			"'",
+			"models",
+			"events",
+			"project",
+			"module_path",
+			"'"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -408,7 +398,7 @@
 		"regex": false,
 		"replace_history":
 		[
-			"KEYSET"
+			"\""
 		],
 		"reverse": false,
 		"show_context": true,
@@ -419,24 +409,24 @@
 	"groups":
 	[
 		{
-			"selected": 4,
+			"selected": 1,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "/C/PROJECTS/mongorm/mongorm/__init__.py",
+					"file": "/S/Transfer/dan/PROJECTS/mongorm/tests/test_submit_meta.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 109,
+						"buffer_size": 2136,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								108,
-								108
+								1900,
+								1900
 							]
 						],
 						"settings":
@@ -464,8 +454,6 @@
 								{
 									"env":
 									{
-										"PATH": "$PATH",
-										"PYTHONPATH": "C:\\Python27\\lib\\site-packages;C:\\Python27;$PYTHONPATH"
 									}
 								}
 							},
@@ -547,10 +535,12 @@
 							},
 							"codeintel_tooltips": "popup",
 							"sublime_auto_complete": true,
-							"syntax": "Packages/Python/Python.tmLanguage"
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 96.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 3,
@@ -558,24 +548,23 @@
 				},
 				{
 					"buffer": 1,
-					"file": "/C/PROJECTS/mongorm/tests/test_validate.py",
+					"file": "/S/Transfer/dan/PROJECTS/mongorm/mongorm/doc.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 986,
+						"buffer_size": 4200,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								88,
-								88
+								412,
+								412
 							]
 						],
 						"settings":
 						{
-							"auto_name": "test_validate.py",
 							"codeintel": true,
 							"codeintel_config":
 							{
@@ -599,8 +588,6 @@
 								{
 									"env":
 									{
-										"PATH": "$PATH",
-										"PYTHONPATH": "C:\\Python27\\lib\\site-packages;C:\\Python27;$PYTHONPATH"
 									}
 								}
 							},
@@ -682,35 +669,37 @@
 							},
 							"codeintel_tooltips": "popup",
 							"sublime_auto_complete": true,
-							"syntax": "Packages/Python/Python.tmLanguage"
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
 						},
-						"translation.x": 0.0,
+						"translation.x": -0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 0,
 					"type": "text"
 				},
 				{
 					"buffer": 2,
-					"file": "/C/PROJECTS/mongorm/requirements.txt",
+					"file": "/S/Transfer/dan/PROJECTS/mongorm/mongorm/connect.py",
 					"semi_transient": true,
 					"settings":
 					{
-						"buffer_size": 43,
+						"buffer_size": 373,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								43,
-								43
+								0,
+								0
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/Text/Plain text.tmLanguage"
+							"syntax": "Packages/Python/Python.tmLanguage"
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -721,543 +710,32 @@
 				},
 				{
 					"buffer": 3,
-					"file": "/C/PROJECTS/mongorm/mongorm/doc.py",
+					"file": "/S/Transfer/dan/PROJECTS/mongorm/tests/test_submit_dict.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 5318,
+						"buffer_size": 951,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1294,
-								962
+								359,
+								359
 							]
 						],
 						"settings":
 						{
-							"codeintel": true,
-							"codeintel_config":
-							{
-								"JavaScript":
-								{
-									"codeintel_max_recursive_dir_depth": 2,
-									"codeintel_scan_files_in_project": false,
-									"javascriptExtraPaths":
-									[
-									]
-								},
-								"PHP":
-								{
-									"codeintel_max_recursive_dir_depth": 5,
-									"codeintel_scan_files_in_project": false,
-									"phpExtraPaths":
-									[
-									]
-								},
-								"Python":
-								{
-									"env":
-									{
-										"PATH": "$PATH",
-										"PYTHONPATH": "C:\\Python27\\lib\\site-packages;C:\\Python27;$PYTHONPATH"
-									}
-								}
-							},
-							"codeintel_enabled_languages":
-							[
-								"JavaScript",
-								"Mason",
-								"XBL",
-								"XUL",
-								"RHTML",
-								"SCSS",
-								"Python",
-								"HTML",
-								"Ruby",
-								"Python3",
-								"XML",
-								"Sass",
-								"XSLT",
-								"Django",
-								"HTML5",
-								"Perl",
-								"CSS",
-								"Twig",
-								"Less",
-								"Smarty",
-								"Node.js",
-								"Tcl",
-								"TemplateToolkit",
-								"PHP"
-							],
-							"codeintel_live": true,
-							"codeintel_live_enabled_languages":
-							[
-								"JavaScript",
-								"Mason",
-								"XBL",
-								"XUL",
-								"RHTML",
-								"SCSS",
-								"Python",
-								"HTML",
-								"Ruby",
-								"Python3",
-								"XML",
-								"Sass",
-								"XSLT",
-								"Django",
-								"HTML5",
-								"Perl",
-								"CSS",
-								"Twig",
-								"Less",
-								"Smarty",
-								"Node.js",
-								"Tcl",
-								"TemplateToolkit",
-								"PHP"
-							],
-							"codeintel_max_recursive_dir_depth": 10,
-							"codeintel_scan_exclude_dir":
-							{
-								"JavaScript":
-								[
-									"/build/",
-									"/min/"
-								]
-							},
-							"codeintel_scan_files_in_project": true,
-							"codeintel_selected_catalogs":
-							[
-								"PyWin32",
-								"jQuery",
-								"Rails"
-							],
-							"codeintel_snippets": true,
-							"codeintel_syntax_map":
-							{
-								"Python Django": "Python"
-							},
-							"codeintel_tooltips": "popup",
-							"sublime_auto_complete": true,
 							"syntax": "Packages/Python/Python.tmLanguage",
 							"tab_size": 4,
 							"translate_tabs_to_spaces": true
 						},
-						"translation.x": 0.0,
-						"translation.y": 800.0,
+						"translation.x": -0.0,
+						"translation.y": 66.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "/C/PROJECTS/mongorm/tests/test_submit_dict.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 385,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								259,
-								259
-							]
-						],
-						"settings":
-						{
-							"auto_name": "test_en_decode.py",
-							"codeintel": true,
-							"codeintel_config":
-							{
-								"JavaScript":
-								{
-									"codeintel_max_recursive_dir_depth": 2,
-									"codeintel_scan_files_in_project": false,
-									"javascriptExtraPaths":
-									[
-									]
-								},
-								"PHP":
-								{
-									"codeintel_max_recursive_dir_depth": 5,
-									"codeintel_scan_files_in_project": false,
-									"phpExtraPaths":
-									[
-									]
-								},
-								"Python":
-								{
-									"env":
-									{
-										"PATH": "$PATH",
-										"PYTHONPATH": "C:\\Python27\\lib\\site-packages;C:\\Python27;$PYTHONPATH"
-									}
-								}
-							},
-							"codeintel_enabled_languages":
-							[
-								"JavaScript",
-								"Mason",
-								"XBL",
-								"XUL",
-								"RHTML",
-								"SCSS",
-								"Python",
-								"HTML",
-								"Ruby",
-								"Python3",
-								"XML",
-								"Sass",
-								"XSLT",
-								"Django",
-								"HTML5",
-								"Perl",
-								"CSS",
-								"Twig",
-								"Less",
-								"Smarty",
-								"Node.js",
-								"Tcl",
-								"TemplateToolkit",
-								"PHP"
-							],
-							"codeintel_live": true,
-							"codeintel_live_enabled_languages":
-							[
-								"JavaScript",
-								"Mason",
-								"XBL",
-								"XUL",
-								"RHTML",
-								"SCSS",
-								"Python",
-								"HTML",
-								"Ruby",
-								"Python3",
-								"XML",
-								"Sass",
-								"XSLT",
-								"Django",
-								"HTML5",
-								"Perl",
-								"CSS",
-								"Twig",
-								"Less",
-								"Smarty",
-								"Node.js",
-								"Tcl",
-								"TemplateToolkit",
-								"PHP"
-							],
-							"codeintel_max_recursive_dir_depth": 10,
-							"codeintel_scan_exclude_dir":
-							{
-								"JavaScript":
-								[
-									"/build/",
-									"/min/"
-								]
-							},
-							"codeintel_scan_files_in_project": true,
-							"codeintel_selected_catalogs":
-							[
-								"PyWin32",
-								"jQuery",
-								"Rails"
-							],
-							"codeintel_snippets": true,
-							"codeintel_syntax_map":
-							{
-								"Python Django": "Python"
-							},
-							"codeintel_tooltips": "popup",
-							"sublime_auto_complete": true,
-							"syntax": "Packages/Python/Python.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "/C/PROJECTS/mongorm/mongorm/connect.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 373,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								44,
-								44
-							]
-						],
-						"settings":
-						{
-							"codeintel": true,
-							"codeintel_config":
-							{
-								"JavaScript":
-								{
-									"codeintel_max_recursive_dir_depth": 2,
-									"codeintel_scan_files_in_project": false,
-									"javascriptExtraPaths":
-									[
-									]
-								},
-								"PHP":
-								{
-									"codeintel_max_recursive_dir_depth": 5,
-									"codeintel_scan_files_in_project": false,
-									"phpExtraPaths":
-									[
-									]
-								},
-								"Python":
-								{
-									"env":
-									{
-										"PATH": "$PATH",
-										"PYTHONPATH": "C:\\Python27\\lib\\site-packages;C:\\Python27;$PYTHONPATH"
-									}
-								}
-							},
-							"codeintel_enabled_languages":
-							[
-								"JavaScript",
-								"Mason",
-								"XBL",
-								"XUL",
-								"RHTML",
-								"SCSS",
-								"Python",
-								"HTML",
-								"Ruby",
-								"Python3",
-								"XML",
-								"Sass",
-								"XSLT",
-								"Django",
-								"HTML5",
-								"Perl",
-								"CSS",
-								"Twig",
-								"Less",
-								"Smarty",
-								"Node.js",
-								"Tcl",
-								"TemplateToolkit",
-								"PHP"
-							],
-							"codeintel_live": true,
-							"codeintel_live_enabled_languages":
-							[
-								"JavaScript",
-								"Mason",
-								"XBL",
-								"XUL",
-								"RHTML",
-								"SCSS",
-								"Python",
-								"HTML",
-								"Ruby",
-								"Python3",
-								"XML",
-								"Sass",
-								"XSLT",
-								"Django",
-								"HTML5",
-								"Perl",
-								"CSS",
-								"Twig",
-								"Less",
-								"Smarty",
-								"Node.js",
-								"Tcl",
-								"TemplateToolkit",
-								"PHP"
-							],
-							"codeintel_max_recursive_dir_depth": 10,
-							"codeintel_scan_exclude_dir":
-							{
-								"JavaScript":
-								[
-									"/build/",
-									"/min/"
-								]
-							},
-							"codeintel_scan_files_in_project": true,
-							"codeintel_selected_catalogs":
-							[
-								"PyWin32",
-								"jQuery",
-								"Rails"
-							],
-							"codeintel_snippets": true,
-							"codeintel_syntax_map":
-							{
-								"Python Django": "Python"
-							},
-							"codeintel_tooltips": "popup",
-							"sublime_auto_complete": true,
-							"syntax": "Packages/Python/Python.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 6,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "/C/PROJECTS/mongorm/mongorm/fields.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2103,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2103,
-								2103
-							]
-						],
-						"settings":
-						{
-							"codeintel": true,
-							"codeintel_config":
-							{
-								"JavaScript":
-								{
-									"codeintel_max_recursive_dir_depth": 2,
-									"codeintel_scan_files_in_project": false,
-									"javascriptExtraPaths":
-									[
-									]
-								},
-								"PHP":
-								{
-									"codeintel_max_recursive_dir_depth": 5,
-									"codeintel_scan_files_in_project": false,
-									"phpExtraPaths":
-									[
-									]
-								},
-								"Python":
-								{
-									"env":
-									{
-										"PATH": "$PATH",
-										"PYTHONPATH": "C:\\Python27\\lib\\site-packages;C:\\Python27;$PYTHONPATH"
-									}
-								}
-							},
-							"codeintel_enabled_languages":
-							[
-								"JavaScript",
-								"Mason",
-								"XBL",
-								"XUL",
-								"RHTML",
-								"SCSS",
-								"Python",
-								"HTML",
-								"Ruby",
-								"Python3",
-								"XML",
-								"Sass",
-								"XSLT",
-								"Django",
-								"HTML5",
-								"Perl",
-								"CSS",
-								"Twig",
-								"Less",
-								"Smarty",
-								"Node.js",
-								"Tcl",
-								"TemplateToolkit",
-								"PHP"
-							],
-							"codeintel_live": true,
-							"codeintel_live_enabled_languages":
-							[
-								"JavaScript",
-								"Mason",
-								"XBL",
-								"XUL",
-								"RHTML",
-								"SCSS",
-								"Python",
-								"HTML",
-								"Ruby",
-								"Python3",
-								"XML",
-								"Sass",
-								"XSLT",
-								"Django",
-								"HTML5",
-								"Perl",
-								"CSS",
-								"Twig",
-								"Less",
-								"Smarty",
-								"Node.js",
-								"Tcl",
-								"TemplateToolkit",
-								"PHP"
-							],
-							"codeintel_max_recursive_dir_depth": 10,
-							"codeintel_scan_exclude_dir":
-							{
-								"JavaScript":
-								[
-									"/build/",
-									"/min/"
-								]
-							},
-							"codeintel_scan_files_in_project": true,
-							"codeintel_selected_catalogs":
-							[
-								"PyWin32",
-								"jQuery",
-								"Rails"
-							],
-							"codeintel_snippets": true,
-							"codeintel_syntax_map":
-							{
-								"Python Django": "Python"
-							},
-							"codeintel_tooltips": "popup",
-							"sublime_auto_complete": true,
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 1259.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 5,
+					"stack_index": 2,
 					"type": "text"
 				}
 			]
@@ -1293,23 +771,19 @@
 			1.0
 		]
 	},
-	"menu_visible": false,
+	"menu_visible": true,
 	"output.exec":
 	{
-		"height": 142.0
+		"height": 256.0
 	},
 	"output.find_results":
 	{
 		"height": 0.0
 	},
-	"output.git":
-	{
-		"height": 130.0
-	},
 	"project": "mongorm.sublime-project",
 	"replace":
 	{
-		"height": 56.0
+		"height": 70.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -1327,35 +801,27 @@
 		[
 			[
 				"",
-				"C:\\PROJECTS\\hotline.sublime-project"
+				"S:\\Transfer\\dan\\PROJECTS\\bnspipe-dev\\projects\\bnspipe-dev.sublime-project"
 			]
 		],
 		"width": 380.0
 	},
 	"select_symbol":
 	{
-		"height": 375.0,
+		"height": 0.0,
 		"selected_items":
 		[
-			[
-				"",
-				"PatternFactory"
-			],
-			[
-				"load_keys",
-				"load_keys"
-			]
 		],
-		"width": 378.0
+		"width": 0.0
 	},
 	"settings":
 	{
 	},
-	"show_minimap": false,
+	"show_minimap": true,
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 174.0,
+	"side_bar_width": 233.0,
 	"status_bar_visible": true,
 	"template_settings":
 	{
