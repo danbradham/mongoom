@@ -1,4 +1,6 @@
 from copy import copy
+from bson.objectid import ObjectId
+from bson import DBRef
 
 
 class ValidationError(Exception):
@@ -36,10 +38,36 @@ class Field(BaseField):
     pass
 
 
+class ObjectIdField(BaseField):
+
+    def __init__(self, _type=ObjectId, default=None, required=False):
+        super(ObjectIdField, self).__init__(_type, default, required)
+
+
+class RefField(BaseField):
+
+    def __init__(self, _type=DBRef, default=None, required=False):
+        super(RefField, self).__init__(_type, default, required)
+
+    def __set__(self, inst, value):
+        try:
+            self.validate(value)
+        except ValidationError:
+            value = value.ref
+            self.validate(value)
+        inst._data[self.name] = value
+
+
 class ListField(BaseField):
 
     def validate(self, value):
         for item in value:
             if not isinstance(value, self._type):
                 raise ValidationError(
-                    "Value in ListField is not {}".format(self._type))
+                    "Value in ListField is not a {}".format(self._type))
+
+
+class ListRefField(ListField):
+
+    def __init__(self, _type=DBRef, default=None, required=False):
+        super(ListRefField, self).__init__(_type, default, required)

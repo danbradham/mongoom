@@ -1,4 +1,8 @@
 import sys
+from bson import DBRef
+from bson.objectid import ObjectId
+from .utils import is_field
+from .fields import Field, ObjectIdField
 
 
 def encode(v):
@@ -27,20 +31,26 @@ class MetaDocument(type):
 
         for name, value in attrs.iteritems():
             if is_field(value):
-                value.name = name
-        attrs["_type"] = clsname
+                value.__dict__["name"] = name
 
         return super(MetaDocument, cls).__new__(cls, clsname, bases, attrs)
 
 
-class EmbeddedDocument(dict):
+class Document(object):
     '''Incredibly bare. Embedded Documents are dictionaries with a key, "type",
     set to __class__.__name__. This allows for a simple decoding strategy:
     On document instantiation, if an attribute is a dictionary and has a type
     key, we replace the attribute with an instance of type'''
 
     __metaclass__ = MetaDocument
+    _type = Field(str)
+    _id = ObjectIdField()
 
     def __init__(self, *args, **kwargs):
-        super(EmbeddedDocument, self).__init__(*args, **kwargs)
-        self._type = self.__class__.__name__
+        self._data = {"_type": self.__class__.__name__}
+        for name, value in kwargs.iteritems():
+            setattr(self, name, value)
+
+    @property
+    def ref(self):
+        return DBRef(self._type, self._id)
