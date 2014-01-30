@@ -1,6 +1,4 @@
 from mongorm import *
-from bson import DBRef
-from bson.objectid import ObjectId
 from datetime import datetime
 
 
@@ -35,40 +33,41 @@ class Container(Document):
 
 
 def main():
+
     from pprint import pprint
 
-    me = User(
-        name="Dan",
-        last_name="Bradham",
-        _id=ObjectId.from_datetime(datetime.utcnow())
-        )
-    pprint(me._data, indent=4, width=40)
+    connect("test_api", "localhost", 27017)
+    c = get_connection()
+    c.drop_database("test_api")
+
+
+    frank = User(
+        name="Frank",
+        last_name="Footer").save()
 
     asset_a = Container(
         name="Asset A",
-        user=me.ref,
-        )
-    pprint(asset_a._data, indent=4, width=40)
+        user=frank).save()
 
-    # model_a = Component(
-    #     name="Model A",
-    #     user=me.ref,
-    #     parent=asset_a,
-    #     )
+    pprint(asset_a._data, width=1)
 
-    # master = Version(
-    #     name="master",
-    #     user=me.ref,
-    #     path="path/to/file.ma",
-    #     images=["path/to/imagefile.png"],
-    #     parent=model_a,
-    #     )
+    model_a = Component(
+        name="Awesome Model",
+        user=frank).save()
 
-    # model_a.versions.append(master)
+    master = Version(
+        name="master",
+        user=frank,
+        path="path/to/file.ma").save()
 
-    # print asset_a
-    # print model_a
-    # print master
+    asset_a.components += model_a  # == asset_a.children.append(model_a)
+    model_a.versions += master  # == model_a.versions.append(master)
+
+    pprint(asset_a._data, width=1)
+
+    asset_a.save()
+    model_a.save()
+    master.save()
 
 if __name__ == "__main__":
     main()

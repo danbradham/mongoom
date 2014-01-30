@@ -1,3 +1,4 @@
-from .doc import Document
-from .fields import ListRefField, Field, ListField, ValidationError, RefField, ObjectIdField
-from .connect import connect
+from .documents import Document
+from .fields import (ValidationError, BaseField, Field, ObjectIdField,
+                     RefField, ListRefField, ListField)
+from .connection import connect, get_connection
