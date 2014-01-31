@@ -4,28 +4,28 @@ from datetime import datetime
 
 
 class Version(Document):
-    name = Field(str)
-    user = Field(DBRef)
+    name = Field(str, required=True)
+    user = RefField()
     path = Field(str)
     images = ListField(str)
     modified = Field(datetime, default=datetime.utcnow)
-    parent = Field(DBRef)
+    parent = RefField()
 
 
 class Component(Document):
     name = Field(str)
-    user = Field(DBRef)
+    user = RefField()
     created = Field(datetime, default=datetime.utcnow)
-    versions = ListField(DBRef)
-    parent = Field(DBRef)
+    versions = ListRefField()
+    parent = RefField()
 
 
 class Container(Document):
 
     name = Field(str, required=True)
-    user = Field(DBRef)
+    user = RefField()
     created = Field(datetime, default=datetime.utcnow)
-    components = ListField(DBRef)
+    components = ListRefField()
 
 
 def main():
@@ -52,3 +52,4 @@ def main():
 
     model_a.versions.append(master)
     model_a.save()
+    master.save()

@@ -1,9 +1,17 @@
 import sys
 
+
 def setdefaultattr(obj, name, default):
     if not hasattr(obj, name):
         setattr(obj, name, default)
     return getattr(obj, name)
+
+
+def rget_subclasses(cls):
+    subclasses = cls.__subclasses__()
+    for subcls in subclasses:
+        subclasses.extend(rget_subclasses(subcls))
+    return subclasses
 
 
 def is_field(value, field_type=None, required=None):
@@ -14,7 +22,7 @@ def is_field(value, field_type=None, required=None):
                 return True
             elif required == value.required:
                 return True
-    elif type(value) in BaseField.__subclasses__():
+    elif type(value) in rget_subclasses(BaseField):
         if required is None:
             return True
         elif required == value.required:
@@ -31,10 +39,10 @@ def dereference(dbref):
     from .connection import get_database
     db = get_database()
     doc = db.dereference(dbref)
-    cls = getattr(sys.modules[__name__], dbref.collection)
-    if dbref.id in cls.__memo__:
-        document = cls.get_memo(doc["_id"])
-        document.update_from(**doc)
+    cls = getattr(sys.modules["__main__"], dbref.collection)
+    if dbref.id in cls.__cache__:
+        document = cls.get_cache(doc["_id"])
+        document.data = doc
     else:
         document = cls(**doc)
     return document

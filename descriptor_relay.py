@@ -1,62 +1,45 @@
-class Loopback(object):
-    '''Loops all getattr calls back to parent.'''
+class Field(object):
+    '''
+    A descriptor whose __get__ method returns an instance of Loopback. Loopback
+    objects redirect all attribute lookup back to their parent descriptor.
+    '''
 
-    def __init__(self, value, parent):
-        self.p = parent
-        self.v = value
-
-    def __str__(self):
-        return self.v.__str__()
-
-    def __getattr__(self, name):
-        return getattr(self.p, name, getattr(self.v, name))
-
-
-class Descriptor(object):
-
-    def __init__(self, *_types, **kwargs):
-        self._types = _types
-        self.required = kwargs.get("required", None)
-        self.default = kwargs.get("default", None)
-        self.name = kwargs.get("name", None)
+    def __init__(self, name):
+        self.name = name
+        self.value = None
 
     def __get__(self, inst, cls):
-        return Loopback(inst._data[self.name], self)
+        self.value = inst._data[self.name]
+        return self
 
     def __set__(self, inst, value):
         inst._data[self.name] = value
 
+    def __getattr__(self,)
 
 class Document(object):
+    def __init__(self, **fields):
+        self._data = {"_type": self.__class__.__name__}
+        for name, value in fields.iteritems():
+            setattr(self, name, value)
 
-    field = Descriptor()
 
-    def __init__(self):
-        self._data = {"_type": self.__class__}
-        for k, v in self.__class__.__dict__.iteritems():
-            if isinstance(v, Descriptor):
-                setattr(v, "name", k)
-                setattr(self, k, [])
+class User(Document):
+    username = Field("username")
+    password = Field("password")
 
 
 def main():
     from pprint import pprint
-    doc_a = Document()
+    teddy = User(
+        username="Teddy",
+        password="Roosevelt"
+        )
 
-    doc_a.field.append(2)
-    pprint(doc_a._data)
+    print teddy.username == "Teddy"
+    print type(teddy.username)
 
-    doc_a.field.extend([2, 4, 6])
-    pprint(doc_a._data)
-
-    doc_a.field.append(2)
-    pprint(doc_a._data)
-
-    doc_a.field.remove(2)
-    pprint(doc_a._data)
-
-    print doc_a.field
-    print type(doc_a.field)
+    print teddy.username.value == "Teddy"
 
 if __name__ == '__main__':
     main()
