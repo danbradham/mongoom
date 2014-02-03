@@ -1,34 +1,39 @@
-from mongorm import *
-from bson import DBRef
+from mongorm import connect, Document, Field, ListField, ListRefField, RefField
 from datetime import datetime
 
 
+class User(Document):
+    name = Field(basestring)
+    last_name = Field(basestring)
+    created = Field(datetime, default=datetime.utcnow)
+
+
 class Version(Document):
-    name = Field(str, required=True)
-    user = RefField()
-    path = Field(str)
-    images = ListField(str)
+    name = Field(basestring, required=True)
+    user = RefField(User)
+    path = Field(basestring)
+    images = ListField(basestring)
     modified = Field(datetime, default=datetime.utcnow)
-    parent = RefField()
 
 
 class Component(Document):
-    name = Field(str)
-    user = RefField()
+    name = Field(basestring)
+    user = RefField(User)
     created = Field(datetime, default=datetime.utcnow)
-    versions = ListRefField()
-    parent = RefField()
+    versions = ListRefField(Version)
 
 
 class Container(Document):
 
-    name = Field(str, required=True)
-    user = RefField()
+    name = Field(basestring, required=True)
+    user = RefField(User)
     created = Field(datetime, default=datetime.utcnow)
-    components = ListRefField()
+    components = ListRefField(Component)
 
 
 def main():
+    connect("test_db", "localhost", 27017)
+
     me = User.find(name="Dan", last_name="Bradham")
 
     asset_a = Container(
@@ -50,6 +55,6 @@ def main():
         parent=model_a,
         ).save()
 
-    model_a.versions.append(master)
+    model_a.versions += master
     model_a.save()
     master.save()

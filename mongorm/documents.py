@@ -1,31 +1,11 @@
-import sys
 import weakref
 from bson import DBRef
 from copy import copy
 from functools import partial
-from .connection import get_database
+from .connection import get_collection, get_database
 from .utils import is_field
-from .fields import Field, ObjectIdField, ValidationError
-
-
-def encode(v):
-    pass
-
-
-def decode(v):
-    if isinstance(v, dict):
-        if "_type" in v:
-            v_cls = getattr(sys.modules[__name__], v["_type"])
-            obj = decode(v_cls(v))
-            for k, v in obj.iteritems():
-                obj[k] = decode(v)
-        return obj
-    if isinstance(v, list):
-        l = []
-        for item in v:
-            l.append(decode(v))
-        return l
-    return v
+from .fields import ObjectIdField, ValidationError, Field
+from .utils import rget_subclasses
 
 
 def cache_ref_deleted(cls, wref):
@@ -40,13 +20,26 @@ def cache_ref_deleted(cls, wref):
 class MetaDocument(type):
 
     def __new__(cls, clsname, bases, attrs):
-
-        attrs["_type"] = Field(str, default=clsname)
+        attrs["_type"] = Field(basestring, default=clsname)
         attrs["_id"] = ObjectIdField()
         attrs["__cache__"] = {}
         for name, value in attrs.iteritems():
             if is_field(value):
                 value.__dict__["name"] = name
+
+        def __init__(self, *args, **kwargs):
+            if "_id" in kwargs and not kwargs["_id"] in self.__cache__:
+                self.cache(kwargs["_id"])
+            self._data = {}
+            for name, value in kwargs.iteritems():
+                setattr(self, name, value)
+            for name, field in self.fields.iteritems():
+                if field.default is not None:
+                    defl = (copy(field.default) if not callable(field.default)
+                            else field.default())
+                    self._data.setdefault(name, defl)
+
+        attrs["__init__"] = __init__
 
         return super(MetaDocument, cls).__new__(cls, clsname, bases, attrs)
 
@@ -59,18 +52,6 @@ class Document(object):
 
     __metaclass__ = MetaDocument
 
-    def __init__(self, *args, **kwargs):
-        if "_id" in kwargs and not kwargs["_id"] in self.__cache__:
-            self.cache(kwargs["_id"])
-        self._data = {}
-        for name, value in kwargs.iteritems():
-            setattr(self, name, value)
-        for name, field in self.fields.iteritems():
-            if field.default is not None:
-                defl = (copy(field.default) if not callable(field.default)
-                        else field.default())
-                self._data.setdefault(name, defl)
-
     @property
     def ref(self):
         if not "_id" in self.data:
@@ -79,8 +60,14 @@ class Document(object):
 
     @property
     def fields(self):
-        return dict((k, v) for k, v in self.__class__.__dict__.iteritems()
-                    if is_field(v))
+        '''Returns all fields from baseclasses to allow for field
+        inheritence. Collects top down ensuring that fields are properly
+        overriden by subclasses.'''
+
+        attrs = {}
+        for obj in reversed(self.__class__.__mro__):
+            attrs.update(obj.__dict__)
+        return dict((k, v) for k, v in attrs.iteritems() if is_field(v))
 
     @property
     def data(self):
@@ -103,7 +90,7 @@ class Document(object):
     def validate(self):
         '''Ensure all required fields are in data.'''
         missing_fields = []
-        for name, field in self.fields:
+        for name, field in self.fields.iteritems():
             if field.required and not field.name in self.data:
                 missing_fields.append(field.name)
 
@@ -113,13 +100,13 @@ class Document(object):
 
     def save(self, *args, **kwargs):
         '''Write _data dict to database.'''
-        db = get_database()
+        col = get_collection(**self.collection())
         self.validate()
         if not "_id" in self.data:  # No id...insert document
-            self._id = db[self._type].insert(self.data, *args, **kwargs)
+            self._id = col.insert(self.data, *args, **kwargs)
             self.cache(self._id)
             return self
-        db[self._type].update({"_id": self._id}, self.data, *args, **kwargs)
+        col.update({"_id": self._id}, self.data, *args, **kwargs)
         return self
 
     @classmethod
@@ -137,16 +124,16 @@ class Document(object):
     @classmethod
     def find(cls, decode=True, **spec):
         '''Find objects in a classes collection.'''
-        db = get_database()
-        docs = db[cls._type].find(spec)
+        col = get_collection(**cls.collection())
+        docs = col.find(spec)
         if not decode:
             return docs
         return cls.generate_objects(docs)
 
     @classmethod
     def find_one(cls, decode=True, **spec):
-        db = get_database()
-        doc = db[cls._type].find_one(spec)
+        col = get_collection(**cls.collection())
+        doc = col.find_one(spec)
         if not decode:
             return doc
 
@@ -158,6 +145,26 @@ class Document(object):
         return document
 
     def remove(self, *args, **kwargs):
-        db = get_database()
+        col = get_collection(**self.collection())
         if "_id" in self.data:
-            db[self._type].remove({"_id": self._id})
+            col.remove({"_id": self._id})
+
+    @classmethod
+    def collection(cls):
+        return getattr(cls, "_collection", {"name": cls.__name__})
+
+    @classmethod
+    def dereference(cls, dbref):
+        db = get_database()
+        doc = db.dereference(dbref)
+        doc_type = cls
+        if not doc["_type"] == cls.__name__:
+            for subc in rget_subclasses(cls):
+                if doc["_type"] == subc.__name__:
+                    doc_type = subc
+        if dbref.id in doc_type.__cache__:
+            document = doc_type.get_cache(doc["_id"])
+            document.data = doc
+        else:
+            document = doc_type(**doc)
+        return document

@@ -1,47 +1,43 @@
-from nose.tools import *
+from nose.tools import ok_, eq_, raises
 from mongorm import (Document, Field, ListField, RefField, ListRefField,
-                     connect, get_connection, get_database)
+                     connect, get_connection, get_database, ValidationError)
 from bson.objectid import ObjectId
-from bson import DBRef
 from datetime import datetime
+
+connect("test_db", "localhost", 27017)
 
 
 class User(Document):
-    name = Field(str, required=True)
-    last_name = Field(str, required=True)
+    name = Field(basestring, required=True)
+    last_name = Field(basestring, required=True)
     created = Field(datetime, default=datetime.utcnow)
 
 
 class Version(Document):
-    name = Field(str)
-    user = RefField()
-    path = Field(str)
-    images = ListField(str)
+    name = Field(basestring)
+    user = RefField(User)
+    path = Field(basestring)
+    images = ListField(basestring)
     modified = Field(datetime, default=datetime.utcnow)
-    parent = RefField()
 
 
 class Component(Document):
-    name = Field(str)
-    user = RefField()
+    name = Field(basestring)
+    user = RefField(User)
     created = Field(datetime, default=datetime.utcnow)
-    versions = ListRefField()
-    parent = RefField()
+    versions = ListRefField(Version)
 
 
 class Container(Document):
-
-    name = Field(str, required=True)
-    user = RefField()
+    name = Field(basestring, required=True)
+    user = RefField(User)
     created = Field(datetime, default=datetime.utcnow)
-    components = ListRefField()
+    components = ListRefField(Component)
     images = ListField()
 
 
 def test_connect():
-    '''Requires mongod to be running on localhost'''
-
-    connect("test_db", "localhost", 27017)
+    '''Connection'''
     c = get_connection()
     c.drop_database("test_db")
 
@@ -49,12 +45,11 @@ def test_connect():
 
     c.test_db.test_col.insert({"name": "test_entry"})
     doc = c.test_db.test_col.find_one({"name": "test_entry"})
-
-    eq_(doc, {"name": "test_entry"})
+    ok_(all(field in doc for field in ["_id", "name"]))
 
 
 def test_save():
-
+    '''Save Document'''
     c = get_connection()
     c.drop_database("test_db")
 
@@ -75,7 +70,7 @@ def test_save():
 
 
 def test_find_one():
-
+    '''Find One'''
     c = get_connection()
     c.drop_database("test_db")
 
@@ -87,7 +82,7 @@ def test_find_one():
 
 
 def test_find():
-
+    '''Find'''
     c = get_connection()
     c.drop_database("test_db")
 
@@ -107,13 +102,12 @@ def test_find():
         ).save()
 
     users = User.find()
-    for user in users:
-        ok_(user in [frank, bob, sam])  # check if returned object is in cache
+    ok_(all(user in [frank, bob, sam]) for user in users)
 
 
 @raises(ValidationError)
 def test_missing_required():
-
+    '''Missing Required Field'''
     c = get_connection()
     c.drop_database("test_db")
 
@@ -122,7 +116,7 @@ def test_missing_required():
 
 
 def test_RefField():
-
+    '''RefField'''
     c = get_connection()
     c.drop_database("test_db")
 
@@ -133,13 +127,13 @@ def test_RefField():
 
     asset_a = Container(
         name="Asset A",
-        user=frank).save()
+        user=frank)
 
-    ok_(asset_a.user is DBRef)
+    ok_(asset_a.user is frank)
 
 
 def test_ListField():
-
+    '''ListField'''
     c = get_connection()
     c.drop_database("test_db")
 
@@ -154,9 +148,26 @@ def test_ListField():
 
     project_a.images.append("path/to/image")
     project_a.images.extend(["path/to/image2", "path/to/image3"])
-    project_a.images.value = ["path/to/image", "path/to/image2", "path/to/image3"]
+    eq_(project_a.images.value,
+        ["path/to/image", "path/to/image2", "path/to/image3"])
+    eq_(project_a.images[0], "path/to/image")
+    eq_(project_a.images[-1], "path/to/image3")
+    eq_(project_a.images[1:], ["path/to/image2", "path/to/image3"])
 
-    pprint(asset_a._data, width=1)
+
+def test_ListRefField():
+    '''ListRefField'''
+    c = get_connection()
+    c.drop_database("test_db")
+
+    frank = User(
+        name="Frank",
+        last_name="Footer"
+        ).save()
+
+    asset_a = Container(
+        name="Asset A",
+        user=frank).save()
 
     model_a = Component(
         name="Awesome Model",
@@ -167,29 +178,16 @@ def test_ListField():
         user=frank,
         path="path/to/file.ma").save()
 
-    print master.images
-    print master.images.value
-    master.images.append("path/to/image")
-    master.images.append("path/to/another")
+    v001 = Version(
+        name="v001",
+        user=frank,
+        path="path/to/file.ma").save()
 
-    asset_a.components.append(model_a)  # == asset_a.children.append(model_a)
-    model_a.versions.append(master)  # == model_a.versions.append(master)
+    asset_a.components += model_a
+    model_a.versions += master, v001
 
-    for obj in asset_a.components:
-        print obj
-
-    print asset_a.components[0]
-
-    print master.images[0]
-    print master.images[1]
-    master.images[0] = "path/to/something"
-    print master.images[0]
-
-    pprint(master.data, width=1)
-    pprint(asset_a.data, width=1)
     asset_a.save()
     model_a.save()
-    master.save()
 
-if __name__ == "__main__":
-    main()
+    ok_(all(isinstance(v, Version) for v in model_a.versions))
+    ok_(all(isinstance(c, Component) for c in asset_a.components))

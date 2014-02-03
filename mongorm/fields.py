@@ -1,6 +1,7 @@
 from bson.objectid import ObjectId
 from bson import DBRef
-from .utils import dereference
+from collections import Iterable
+from .utils import rget_subclasses
 
 
 class ValidationError(Exception):
@@ -9,9 +10,9 @@ class ValidationError(Exception):
 
 class BaseField(object):
     '''
-    A descriptor whose __get__ method returns an instance of Loopback. Loopback
-    objects redirect all attribute lookup back to their parent descriptor. This
-    allows you to call methods on a descriptor from their parent instance.
+    A descriptor that sets and gets data from the _data dict of an object. The
+    name attribute is set in the metaclass of Document, MetaDocument. BaseField
+    should only be used as a Baseclass. Use Field for a basic Field descriptor.
 
     :param types: all args are types for validation
     :param default: default values are copied to inst._data on
@@ -24,8 +25,7 @@ class BaseField(object):
 
     def __init__(self, *types, **kwargs):
         self.name = kwargs.get("name")
-        self.types = (types if not str in types
-                      else tuple(list(types) + [unicode]))
+        self.types = types
         self.default = kwargs.get("default", None)
         self.required = kwargs.get("required", False)
 
@@ -44,27 +44,42 @@ class BaseField(object):
         inst._data[self.name] = value
 
     def validate(self, value):
-        if not type(value) in self.types:
+        if not isinstance(value, self.types):
             raise ValidationError(
                 "{} must be of types: {}.".format(self.name, self.types))
 
 
-class Field(BaseField):
-    pass
+# Use Field not BaseField for clarity. BaseField only as a baseclass.
+Field = type("Field", (BaseField,), {})
 
 
 class RefField(BaseField):
 
     def __init__(self, *types, **kwargs):
+        if not types:
+            raise TypeError("All possible python objects must be provided"
+                            " for dereferencing.")
+        types_and_subtypes = []
+        for typ in types:
+            types_and_subtypes.append(typ)
+            types_and_subtypes.extend(rget_subclasses(typ))
+        self.doc_types = dict((typ.__name__, typ)
+                              for typ in types_and_subtypes)
         super(RefField, self).__init__(DBRef, **kwargs)
 
     def __get__(self, inst, cls):
         if inst:
-            return dereference(inst._data[self.name])
+            ref = inst._data[self.name]
+            doc_type = self.doc_types.get(ref.collection, None)
+            if doc_type is None:
+                raise TypeError("Can not find appropriate type for ref.")
+            return doc_type.dereference(ref)
         return self
 
     def __set__(self, inst, value):
-        if not value in self.types:
+        try:
+            self.validate(value)
+        except ValidationError:
             value = value.ref
         inst._data[self.name] = value
 
@@ -80,8 +95,8 @@ class SelfishField(BaseField):
     lookup back to itself. Not entirely selfish though, __getattr__ is
     overloaded to return attribute lookup back to its _value object.'''
 
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, *types, **kwargs):
+        super(SelfishField, self).__init__(*types, **kwargs)
         self._value = None
 
     def __getattr__(self, name):
@@ -89,12 +104,12 @@ class SelfishField(BaseField):
 
     def __get__(self, inst, cls):
         if inst:
-            self._value = inst.__dict__[self.name]
+            self._value = inst._data[self.name]
         return self
 
     def __set__(self, inst, value):
         self._value = value
-        inst.__dict__[self.name] = value
+        inst._data[self.name] = value
 
 
 class ListField(SelfishField):
@@ -128,6 +143,15 @@ class ListField(SelfishField):
 class ListRefField(ListField):
 
     def __init__(self, *types, **kwargs):
+        if not types:
+            raise TypeError("All possible python objects must be provided"
+                            "for dereferencing.")
+        types_and_subtypes = []
+        for typ in types:
+            types_and_subtypes.append(typ)
+            types_and_subtypes.extend(rget_subclasses(typ))
+        self.doc_types = dict((typ.__name__, typ)
+                              for typ in types_and_subtypes)
         super(ListRefField, self).__init__(DBRef, **kwargs)
 
     def __setitem__(self, key, value):
@@ -136,16 +160,21 @@ class ListRefField(ListField):
         super(ListRefField, self).__setitem__(key, value)
 
     def __getitem__(self, key):
-        value = self._value[key]
-        value = dereference(value)
-        return value
+        ref = self._value[key]
+        doc_type = self.doc_types.get(ref.collection, None)
+        if doc_type is None:
+            raise TypeError("Can not find appropriate type for dereferencing.")
+        return doc_type.dereference(ref)
 
     def __iadd__(self, value):
+        if isinstance(value, Iterable):
+            self.extend(value)
+            return self._value
         self.append(value)
         return self._value
 
-    def __isub__(self, value):
-        self._value.remove(value)
+    def __add__(self, value):
+        self.append(value)
         return self._value
 
     def append(self, value):

@@ -1,4 +1,3 @@
-import sys
 
 
 def setdefaultattr(obj, name, default):
@@ -33,16 +32,3 @@ def is_embedded_doc(value):
     from .documents import EmbeddedDocument
     if type(value) in EmbeddedDocument.__subclasses__():
         return True
-
-
-def dereference(dbref):
-    from .connection import get_database
-    db = get_database()
-    doc = db.dereference(dbref)
-    cls = getattr(sys.modules["__main__"], dbref.collection)
-    if dbref.id in cls.__cache__:
-        document = cls.get_cache(doc["_id"])
-        document.data = doc
-    else:
-        document = cls(**doc)
-    return document
