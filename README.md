@@ -1,14 +1,14 @@
-mongorm
+Python Mongo ORM
 =======
 
-An Object-Relational Mapping for MongoDB. MongORM's highest priority is to be as pythonic as possible. Heavily inspired by Django and MongoEngine, but,
-attempting to be a bit easier to use. Here's a rather elaborate example of the core functionality:
+An Object-Relational Mapping for MongoDB. MongORM's highest priority is to be as pythonic as possible. Heavily inspired by Django and MongoEngine, but, attempting to be a bit easier to use. Here's a rather elaborate example of the core functionality:
 
 ```python
 from mongorm import Document, Field, RefField, ListRefField, connect
 from datetime import datetime
 
 class User(Document):
+    _index = {"keys": [("name", 1), ("last_name", 1)], "unique": True}
     name = Field(basestring, required=True)
     last_name = Field(basestring, required=True)
     created = Field(datetime, default=datetime.utcnow)
@@ -50,7 +50,7 @@ if __name__ == "__main__":
               "Mr. Edison's ideas, this too will be proven impractical"),
         ).save()
 
-    bulb.comments += rude_comment
+    bulb.comments += rude_comment  # iadd operator on ListRefFields automatically appends or extends DBRefs
     bulb.save()
 
 ```
