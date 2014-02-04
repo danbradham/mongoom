@@ -2,7 +2,7 @@ mongorm
 =======
 
 An Object-Relational Mapping for MongoDB. MongORM's highest priority is to be as pythonic as possible. Heavily inspired by Django and MongoEngine, but,
-attempting to be more simple to use.
+attempting to be a bit easier to use.
 
 ```python
 from mongorm import Document, Field, RefField, ListRefField, connect
