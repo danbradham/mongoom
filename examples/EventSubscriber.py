@@ -3,8 +3,8 @@ monkey.patch_all()
 from collections import defaultdict
 from datetime import datetime
 import functools
-from mongorm import (connect, get_connection, Subscriber,
-                     Event, fire, Document, Field)
+from pymongorm import (connect, get_connection, Subscriber,
+                       Event, fire, Document, Field)
 from pprint import pprint
 from random import choice
 from time import sleep

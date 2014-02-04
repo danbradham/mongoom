@@ -77,7 +77,8 @@ class Document(object):
 
     @data.setter
     def data(self, data):
-        self._data = data
+        for name, value in data.iteritems():
+            setattr(self, name, value)
 
     def cache(self, _id):
         '''Document cache, used to ensure that only one object mapped to a db
@@ -105,7 +106,7 @@ class Document(object):
 
     def save(self, *args, **kwargs):
         '''Write _data dict to database.'''
-        col = get_collection(**self.collection())
+        col = get_collection(self.index(), self.collection())
         self.validate()
         if not "_id" in self.data:  # No id...insert document
             self._id = col.insert(self.data, *args, **kwargs)
@@ -129,7 +130,7 @@ class Document(object):
     @classmethod
     def find(cls, decode=True, **spec):
         '''Find objects in a classes collection.'''
-        col = get_collection(**cls.collection())
+        col = get_collection(cls.index(), cls.collection())
         docs = col.find(spec)
         if not decode:
             return docs
@@ -137,7 +138,7 @@ class Document(object):
 
     @classmethod
     def find_one(cls, decode=True, **spec):
-        col = get_collection(**cls.collection())
+        col = get_collection(cls.index(), cls.collection())
         doc = col.find_one(spec)
         if not decode:
             return doc
@@ -150,9 +151,14 @@ class Document(object):
         return document
 
     def remove(self, *args, **kwargs):
-        col = get_collection(**self.collection())
+        col = get_collection(self.index(), self.collection())
         if "_id" in self.data:
             col.remove({"_id": self._id})
+
+    @classmethod
+    def index(cls):
+        '''Returns index kwargs used for collection index.'''
+        return getattr(cls, "_index", None)
 
     @classmethod
     def collection(cls):

@@ -1,0 +1,53 @@
+from pymongo import MongoClient
+from pymongo.errors import CollectionInvalid
+
+
+CONNECTION = None
+DATABASE = None
+
+
+def connect(database, host="localhost", port=27017):
+    '''Connect to a database at given host and port.'''
+    global CONNECTION
+    global DATABASE
+    c = MongoClient(host, port)
+    CONNECTION = c
+    DATABASE = c[database]
+    return c
+
+
+def get_database():
+    '''Get database'''
+    global DATABASE
+    return DATABASE
+
+
+def get_collection(index_kwargs=None, coll_kwargs=None):
+    '''Gets a collection from index_kwargs and coll_kwargs.
+    If a collection does not exist create collection using coll_kwargs.
+    If an index does not exist, ensure an index using index_kwargs.
+
+    :param index_kwargs: Dictionary matching the signature of
+        pymongo.database.ensure_index
+    :param coll_kwargs: Dictionary matching the signature of
+        pymongo.database.create_collection
+    '''
+    global DATABASE
+    try:
+        DATABASE.create_collection(**coll_kwargs)
+    except CollectionInvalid:
+        pass
+    collection = DATABASE[coll_kwargs["name"]]
+    if index_kwargs:
+        indices = collection.index_information()
+        index_name = "_".join(
+            [str(item) for key in index_kwargs["key_or_list"] for item in key])
+        if not index_name in indices:
+            collection.ensure_index(**index_kwargs)
+    return collection
+
+
+def get_connection():
+    '''Get global connection.'''
+    global CONNECTION
+    return CONNECTION

@@ -1,4 +1,4 @@
-from mongorm import connect, Document, Field, ListField, ListRefField, RefField
+from pymongorm import connect, Document, Field, ListField, ListRefField, RefField
 from datetime import datetime
 
 

@@ -1,5 +1,5 @@
 from nose.tools import ok_, eq_, raises
-from mongorm import (Document, Field, ListField, RefField, ListRefField,
+from pymongorm import (Document, Field, ListField, RefField, ListRefField,
                      connect, get_connection, get_database, ValidationError)
 from bson.objectid import ObjectId
 from datetime import datetime
@@ -8,6 +8,7 @@ connect("test_db", "localhost", 27017)
 
 
 class User(Document):
+    _index = {"key_or_list": [("name", 1), ("last_name", 1)], "unique": True}
     name = Field(basestring, required=True)
     last_name = Field(basestring, required=True)
     created = Field(datetime, default=datetime.utcnow)
@@ -22,6 +23,7 @@ class Version(Document):
 
 
 class Component(Document):
+    _index = {"key_or_list": [("name", 1), ("created", 1)], "unique": True}
     name = Field(basestring)
     user = RefField(User)
     created = Field(datetime, default=datetime.utcnow)
@@ -29,6 +31,7 @@ class Component(Document):
 
 
 class Container(Document):
+    _index = {"key_or_list": [("name", 1), ("created", 1)], "unique": True}
     name = Field(basestring, required=True)
     user = RefField(User)
     created = Field(datetime, default=datetime.utcnow)
@@ -191,3 +194,11 @@ def test_ListRefField():
 
     ok_(all(isinstance(v, Version) for v in model_a.versions))
     ok_(all(isinstance(c, Component) for c in asset_a.components))
+
+
+def test_index():
+    db = get_database()
+    index_kwargs = User.index()
+    index_name = "_".join(
+        [str(item) for key in index_kwargs["key_or_list"] for item in key])
+    ok_(index_name in db.User.index_information())
