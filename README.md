@@ -47,7 +47,7 @@ if __name__ == "__main__":
     rude_comment = Comment(
         user=naysayer,
         text=("It's impossible to create a viable light bulb. Like all of"
-              "Mr. Edison's ideas, this too will be proven impracticle"),
+              "Mr. Edison's ideas, this too will be proven impractical"),
         ).save()
 
     bulb.comments += rude_comment
