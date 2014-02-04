@@ -77,7 +77,7 @@ if __name__ == "__main__":
 
     fire(Event)  # Fire a blank Event to initialize capped collection
     ev_producer = Thread(target=producer)
-    ev_subscriber = EventSubscriber("Event")
+    ev_subscriber = EventHandler("Event")
 
     ev_producer.start()
     ev_subscriber.start()

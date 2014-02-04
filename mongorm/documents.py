@@ -45,15 +45,17 @@ class MetaDocument(type):
 
 
 class Document(object):
-    '''Incredibly bare. Embedded Documents are dictionaries with a key, "type",
-    set to __class__.__name__. This allows for a simple decoding strategy:
-    On document instantiation, if an attribute is a dictionary and has a type
-    key, we replace the attribute with an instance of type'''
+    '''Class attributes that are subclasses of BaseField are used to set the
+    defaults of a Document's _data dictionary. The _data dictionary is the data
+    entered into database. All _data is accessible through the data property of
+    a Document, therefore it's imperative that you do not assign a Field to
+    a class attribute named data for subclasses of Document.'''
 
     __metaclass__ = MetaDocument
 
     @property
     def ref(self):
+        '''Returns a DBRef, saves before returning if _id not in data.'''
         if not "_id" in self.data:
             self.save()
         return DBRef(self._type, self._id)
@@ -61,7 +63,7 @@ class Document(object):
     @property
     def fields(self):
         '''Returns all fields from baseclasses to allow for field
-        inheritence. Collects top down ensuring that fields are properly
+        inheritence. Collects fields top down ensuring that fields are properly
         overriden by subclasses.'''
 
         attrs = {}
@@ -78,11 +80,14 @@ class Document(object):
         self._data = data
 
     def cache(self, _id):
+        '''Document cache, used to ensure that only one object mapped to a db
+        document is in memory at any given time.'''
         self.__cache__[_id] = weakref.ref(
             self, partial(cache_ref_deleted, self.__class__))
 
     @classmethod
     def get_cache(cls, _id):
+        '''Returns a python object if the _id is cached in memory'''
         ref = cls.__cache__.get(_id)
         if ref:
             return ref()
@@ -151,6 +156,7 @@ class Document(object):
 
     @classmethod
     def collection(cls):
+        '''Returns collection kwargs used for collection creation.'''
         return getattr(cls, "_collection", {"name": cls.__name__})
 
     @classmethod
