@@ -28,18 +28,26 @@ class Project(Document):
 if __name__ == "__main__":
     connect("test_db", "localhost", 27017)
 
-    edison = User(name="Thomas", last_name="Edison").save()
+    edison = User(
+        name="Thomas",
+        last_name="Edison",
+        ).save()
+
     bulb = Project(
         name="Light Bulb",
         user=edison,
         description="Create a commercially viable light bulb.",
         ).save()
 
-    naysayer = User(name="Anonymous", last_name="Naysayer").save()
+    naysayer = User(
+        name="Anonymous",
+        last_name="Naysayer",
+        ).save()
+
     rude_comment = Comment(
         user=naysayer,
         text=("It's impossible to create a viable light bulb. Like all of"
-              "Mr. Edison's ideas, this too will be proven impracticle")
+              "Mr. Edison's ideas, this too will be proven impracticle"),
         ).save()
 
     bulb.comments += rude_comment

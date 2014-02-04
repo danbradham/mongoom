@@ -1,7 +1,7 @@
 from bson.objectid import ObjectId
 from bson import DBRef
 from collections import Iterable
-from .utils import rget_subclasses
+import sys
 
 
 class ValidationError(Exception):
@@ -49,30 +49,22 @@ class BaseField(object):
                 "{} must be of types: {}.".format(self.name, self.types))
 
 
-# Use Field not BaseField for clarity. BaseField only as a baseclass.
+# Use Field not BaseField for clarity. Use BaseField only as a super.
 Field = type("Field", (BaseField,), {})
 
 
 class RefField(BaseField):
 
     def __init__(self, *types, **kwargs):
-        if not types:
-            raise TypeError("All possible python objects must be provided"
-                            " for dereferencing.")
-        types_and_subtypes = []
-        for typ in types:
-            types_and_subtypes.append(typ)
-            types_and_subtypes.extend(rget_subclasses(typ))
-        self.doc_types = dict((typ.__name__, typ)
-                              for typ in types_and_subtypes)
+        self.doc_types = dict((typ.__name__, typ) for typ in types)
         super(RefField, self).__init__(DBRef, **kwargs)
 
     def __get__(self, inst, cls):
         if inst:
             ref = inst._data[self.name]
-            doc_type = self.doc_types.get(ref.collection, None)
-            if doc_type is None:
-                raise TypeError("Can not find appropriate type for ref.")
+            doc_type = self.doc_types.get(
+                ref.collection,
+                getattr(sys.modules["__main__"], ref.collection, None))
             return doc_type.dereference(ref)
         return self
 
@@ -143,15 +135,7 @@ class ListField(SelfishField):
 class ListRefField(ListField):
 
     def __init__(self, *types, **kwargs):
-        if not types:
-            raise TypeError("All possible python objects must be provided"
-                            "for dereferencing.")
-        types_and_subtypes = []
-        for typ in types:
-            types_and_subtypes.append(typ)
-            types_and_subtypes.extend(rget_subclasses(typ))
-        self.doc_types = dict((typ.__name__, typ)
-                              for typ in types_and_subtypes)
+        self.doc_types = dict((typ.__name__, typ) for typ in types)
         super(ListRefField, self).__init__(DBRef, **kwargs)
 
     def __setitem__(self, key, value):
@@ -161,9 +145,9 @@ class ListRefField(ListField):
 
     def __getitem__(self, key):
         ref = self._value[key]
-        doc_type = self.doc_types.get(ref.collection, None)
-        if doc_type is None:
-            raise TypeError("Can not find appropriate type for dereferencing.")
+        doc_type = self.doc_types.get(
+            ref.collection,
+            getattr(sys.modules["__main__"], ref.collection, None))
         return doc_type.dereference(ref)
 
     def __iadd__(self, value):
