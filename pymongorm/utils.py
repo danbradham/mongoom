@@ -13,22 +13,20 @@ def rget_subclasses(cls):
     return subclasses
 
 
-def is_field(value, field_type=None, required=None):
+def is_field(value):
     from .fields import BaseField
-    if field_type:
-        if isinstance(value, field_type):
-            if required is None:
-                return True
-            elif required == value.required:
-                return True
-    elif type(value) in rget_subclasses(BaseField):
-        if required is None:
-            return True
-        elif required == value.required:
+    all_fields = tuple([BaseField] + rget_subclasses(BaseField))
+    if isinstance(value, all_fields):
             return True
 
 
-def is_embedded_doc(value):
-    from .documents import EmbeddedDocument
-    if type(value) in EmbeddedDocument.__subclasses__():
+def is_document(value):
+    from .documents import MetaDocument
+    if isinstance(value, MetaDocument):
+        return True
+
+
+def is_embedded(value):
+    from .documents import MetaEmbedded
+    if isinstance(value, MetaEmbedded):
         return True

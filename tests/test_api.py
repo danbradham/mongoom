@@ -1,6 +1,5 @@
 from nose.tools import ok_, eq_, raises
-from pymongorm import (Document, Field, ListField, RefField, ListRefField,
-                       DictField, ListDictField, connect, get_connection,
+from pymongorm import (Document, Field, ListField, connect, get_connection,
                        get_database, ValidationError)
 from bson.objectid import ObjectId
 from datetime import datetime
@@ -17,7 +16,7 @@ class User(Document):
 
 class Version(Document):
     name = Field(basestring)
-    user = RefField(User)
+    user = Field(User)
     path = Field(basestring)
     images = ListField(basestring)
     modified = Field(datetime, default=datetime.utcnow)
@@ -26,17 +25,17 @@ class Version(Document):
 class Component(Document):
     _index = {"key_or_list": [("name", 1), ("created", 1)], "unique": True}
     name = Field(basestring)
-    user = RefField(User)
+    user = Field(User)
     created = Field(datetime, default=datetime.utcnow)
-    versions = ListRefField(Version)
+    versions = ListField(Version)
 
 
 class Container(Document):
     _index = {"key_or_list": [("name", 1), ("created", 1)], "unique": True}
     name = Field(basestring, required=True)
-    user = RefField(User)
+    user = Field(User)
     created = Field(datetime, default=datetime.utcnow)
-    components = ListRefField(Component)
+    components = ListField(Component)
     images = ListField()
 
 
@@ -121,6 +120,7 @@ def test_missing_required():
 
 def test_RefField():
     '''RefField'''
+    from pprint import pprint
     c = get_connection()
     c.drop_database("test_db")
 

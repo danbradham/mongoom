@@ -4,7 +4,7 @@ from copy import copy
 from functools import partial
 from .connection import get_collection, get_database
 from .utils import is_field
-from .fields import ObjectIdField, ValidationError, Field, DictField
+from .fields import ObjectIdField, ValidationError, BaseField
 from .utils import rget_subclasses
 
 
@@ -20,7 +20,7 @@ def cache_ref_deleted(cls, wref):
 class MetaDocument(type):
 
     def __new__(cls, clsname, bases, attrs):
-        attrs["_type"] = Field(basestring, default=clsname)
+        attrs["_type"] = BaseField(basestring, default=clsname)
         attrs["_id"] = ObjectIdField()
         attrs["__cache__"] = {}
         for name, value in attrs.iteritems():
@@ -99,10 +99,6 @@ class Document(object):
         for name, field in self.fields.iteritems():
             if field.required and not field.name in self.data:
                 missing_fields.append(field.name)
-            if isinstance(field, DictField):
-                d = getattr(self, field.name, {})
-                if isinstance(d, rget_subclasses(EmbeddedDocument)):
-                    d.validate()
 
         if missing_fields:
             raise ValidationError(
@@ -187,15 +183,22 @@ class Document(object):
 
 
 class MetaEmbedded(type):
+    '''Metaclass or Type for all embedded documents.'''
 
     def __new__(cls, clsname, bases, attrs):
-        attrs["_type"] = Field(basestring, default=clsname)
+        attrs["_type"] = BaseField(basestring, default=clsname)
         for name, value in attrs.iteritems():
             if is_field(value):
                 value.__dict__["name"] = name
 
         def __init__(self, *args, **kwargs):
-            self._data = {}
+            ''':param data: If a kwarg data is provided it is assigned to the
+            _data attribute of the new instance. This allows us to work
+            directly on an object embedded in another documents _data dict.
+            Typically the data kwarg is only passed when decoding an embedded
+            document.'''
+
+            self._data = kwargs.pop("data", {})
             for name, value in kwargs.iteritems():
                 setattr(self, name, value)
             for name, field in self.fields.iteritems():
@@ -206,10 +209,14 @@ class MetaEmbedded(type):
 
         attrs["__init__"] = __init__
 
-        return super(MetaDocument, cls).__new__(cls, clsname, bases, attrs)
+        return super(MetaEmbedded, cls).__new__(cls, clsname, bases, attrs)
 
 
 class EmbeddedDocument(object):
+    '''Baseclass for all embedded documents. Unlike Document objects,
+    EmbeddedDocument objects do not have an object id and do not map directly
+    to a collection within a database. They share only the fields and data
+    properties as well as a validate method with Document objects.'''
 
     __metaclass__ = MetaEmbedded
 

@@ -2,6 +2,7 @@ from bson.objectid import ObjectId
 from bson import DBRef
 from collections import Iterable
 import sys
+from .utils import is_document, is_embedded
 
 
 class ValidationError(Exception):
@@ -62,44 +63,73 @@ class BaseField(object):
             value = value.ref
         return value
 
+    def from_dict(self, value):
+        '''Decodes a dict object.'''
+        if "_type" in value:
+            doc_type = self.doc_types.get(
+                value["_type"],
+                getattr(sys.modules["__main__"], value["_type"], None))
+            return doc_type(data=value)
+        return value
 
-# Use Field not BaseField for clarity. Use BaseField only as a super.
-Field = type("Field", (BaseField,), {})
+    def from_ref(self, value):
+        '''Decodes a DBRef.'''
+        doc_type = self.doc_types.get(
+            value.collection,
+            getattr(sys.modules["__main__"], value.collection, None))
+        return doc_type.dereference(value)
 
 
-class RefField(BaseField):
+class Field(BaseField):
+    '''A multipurpose field supporting python standard types. This is the
+    go to field for basestrings, booleans, ints, floats, dicts and also
+    supports DBRefs, and EmbeddedDocuments. DBRefs are automatically
+    stored as a DBRef and decoded as a python object. Similarly
+    EmbeddedDocuments are stored as dicts and decoded as python objects.'''
 
     def __init__(self, *types, **kwargs):
+        self.encode, self.decode = None, None
         self.doc_types = dict((typ.__name__, typ) for typ in types)
-        super(RefField, self).__init__(DBRef, **kwargs)
+        if all(is_document(typ) for typ in types):
+            self.encode = self.to_ref
+            self.decode = self.from_ref
+            types = (DBRef, )
+        elif all(is_embedded(typ) for typ in types):
+            self.encode = self.to_dict
+            self.decode = self.from_dict
+            types = (dict, )
+        super(Field, self).__init__(*types, **kwargs)
 
     def __get__(self, inst, cls):
-        if inst:
-            ref = inst._data[self.name]
-            doc_type = self.doc_types.get(
-                ref.collection,
-                getattr(sys.modules["__main__"], ref.collection, None))
-            return doc_type.dereference(ref)
-        return self
+        if self.decode and inst:
+            return self.decode(inst._data[self.name])
+        super(Field, self).__get__(inst, cls)
 
     def __set__(self, inst, value):
-        inst._data[self.name] = self.to_ref(value)
+        if self.encode:
+            value = self.encode(value)
+        super(Field, self).__set__(inst, value)
 
 
 class ObjectIdField(BaseField):
+    '''A convenience field, exactly the same as Field(ObjectId)'''
 
-    def __init__(self, *types, **kwargs):
+    def __init__(self, **kwargs):
         super(ObjectIdField, self).__init__(ObjectId, **kwargs)
 
 
 class SelfishField(BaseField):
-    '''A very selfish descriptor. Returns itself on __get__ redirecting attr
-    lookup back to itself. Not entirely selfish though, __getattr__ is
-    overloaded to return attribute lookup back to its _value object.'''
+    '''A very selfish descriptor. Returns itself on __get__ redirecting
+    attr lookup back to itself, allowing us to "overload" methods and add
+    custom functionality. If the attribute or method is not found in the
+    descriptor, attribute lookup is directed back toward the data
+    object that we're acting on. One drawback is that we always return a
+    descriptor object on lookup and not a standard python object. To access
+    the python object the value property has been introduced.'''
 
     def __init__(self, *types, **kwargs):
-        super(SelfishField, self).__init__(*types, **kwargs)
         self._value = None
+        super(SelfishField, self).__init__(*types, **kwargs)
 
     def __getattr__(self, name):
         return getattr(self._value, name)
@@ -113,51 +143,49 @@ class SelfishField(BaseField):
         self._value = value
         inst._data[self.name] = value
 
+    @property
+    def value(self):
+        return self._value
+
 
 class ListField(SelfishField):
-    '''A descriptor that '''
+    '''A ListField! Supports multiple types like a Field descriptor, and the
+    same automatic encoding and decoding of DBRefs and EmbeddedDocuments.'''
 
     def __init__(self, *types, **kwargs):
         kwargs["default"] = list
-        super(ListField, self).__init__(*types, **kwargs)
+        self.encode, self.decode = None, None
+        self.doc_types = dict((typ.__name__, typ) for typ in types)
+        if all(is_document(typ) for typ in types):
+            self.encode = self.to_ref
+            self.decode = self.from_ref
+        elif all(is_embedded(typ) for typ in types):
+            self.encode = self.to_dict
+            self.decode = self.from_dict
+        super(ListField, self).__init__(list, **kwargs)
 
     def __set__(self, inst, value):
-        if not isinstance(value, list):
-            raise ValidationError("Must be a list.")
+        self.validate(value)
+        items = []
         for item in value:
-            self.validate(item)
-        self._value = value
-        inst._data[self.name] = value
+            if self.encode:
+                item = self.encode(item)
+            items.append(item)
+        self._value = items
+        inst._data[self.name] = items
 
     def __getitem__(self, key):
-        return self._value[key]
+        value = self._value[key]
+        if self.decode:
+            value = self.decode(value)
+        return value
 
     def __setitem__(self, key, value):
-        self.validate(value)
+        if self.encode:
+            value = self.encode(value)
         self._value[key] = value
         return self._value
 
-    @property
-    def value(self):
-        return self._value
-
-
-class ListRefField(ListField):
-
-    def __init__(self, *types, **kwargs):
-        self.doc_types = dict((typ.__name__, typ) for typ in types)
-        super(ListRefField, self).__init__(DBRef, **kwargs)
-
-    def __setitem__(self, key, value):
-        super(ListRefField, self).__setitem__(key, self.to_ref(value))
-
-    def __getitem__(self, key):
-        ref = self._value[key]
-        doc_type = self.doc_types.get(
-            ref.collection,
-            getattr(sys.modules["__main__"], ref.collection, None))
-        return doc_type.dereference(ref)
-
     def __iadd__(self, value):
         if isinstance(value, Iterable):
             self.extend(value)
@@ -166,98 +194,16 @@ class ListRefField(ListField):
         return self._value
 
     def __add__(self, value):
-        self.append(value)
-        return self._value
-
-    def append(self, value):
-        self._value.append(self.to_ref(value))
-
-    def extend(self, values):
-        for value in values:
-            self.append(value)
-
-
-class DictField(BaseField):
-    '''A dict field that supports standard dictionaries. If a subclass of
-    EmbeddedDocument is provided they will automatically be encoded and decoded
-    by __set__ and __get__ respectively.'''
-
-    def __init__(self, *types, **kwargs):
-        kwargs["default"] = dict
-        self.doc_types = dict((typ.__name__, typ) for typ in types)
-        super(ListRefField, self).__init__(dict, **kwargs)
-
-    def __set__(self, inst, value):
-        inst._data[self.name] = self.to_dict(value)
-
-    def __get__(self, inst, cls):
-        if inst:
-            data = inst._data[self.name]
-            if "_type" in data:
-                doc_type = self.doc_types.get(
-                    data["_type"],
-                    getattr(sys.modules["__main__"], data["_type"], None))
-                return doc_type(**data)
-            return data
-        return self
-
-
-class ListDictField(SelfishField):
-    '''A descriptor that '''
-
-    def __init__(self, *types, **kwargs):
-        kwargs["default"] = list
-        self.doc_types = dict((typ.__name__, typ) for typ in types)
-        super(ListField, self).__init__(dict, **kwargs)
-
-    def __set__(self, inst, value):
-        if not isinstance(value, list):
-            raise ValidationError("Must be a list.")
-        for item in value:
-            self.validate(item)
-        self._value = value
-        inst._data[self.name] = value
-
-    def __getitem__(self, key):
-        data = self._value[key]
-        if "_type" in data:
-            doc_type = self.doc_types.get(
-                data["_type"],
-                getattr(sys.modules["__main__"], data["_type"], None))
-            return doc_type(**data)
-        return data
-
-    def __setitem__(self, key, value):
-        self._value[key] = self.to_dict(value)
-        return self._value
-
-    def __iadd__(self, value):
         if isinstance(value, Iterable):
             self.extend(value)
             return self._value
-        self.append(value)
-        return self._value
-
-    def __add__(self, value):
-        self.append(value)
-        return self._value
+        raise TypeError("Can not concatenate list and {}".formate(type(value)))
 
     def append(self, value):
-        self._value.append(self.to_dict(value))
+        if self.encode:
+            value = self.encode(value)
+        self._value.append(value)
 
     def extend(self, values):
         for value in values:
             self.append(value)
-
-    def to_dict(self, value):
-        '''Make sure that the value is a dictionary, if it is an
-        EmbeddedDocument, pull the documents data.'''
-        try:
-            self.validate(value)
-        except ValidationError:
-            value = value.data
-        return value
-
-    @property
-    def value(self):
-        return self._value

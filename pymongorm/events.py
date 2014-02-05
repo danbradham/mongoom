@@ -1,6 +1,6 @@
 from datetime import datetime
 from .documents import Document
-from .fields import RefField, Field
+from .fields import Field
 
 
 def fire(event, *args, **kwargs):
@@ -15,6 +15,6 @@ def fire(event, *args, **kwargs):
 
 class Event(Document):
     _collection = {"name": "Event", "capped": True, "max": 100, "size": 2**20}
-    ref = RefField(Document)
-    user = RefField(Document)
+    ref = Field(Document)
+    user = Field(Document)
     created = Field(datetime, default=datetime.utcnow)
