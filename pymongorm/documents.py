@@ -4,7 +4,7 @@ from copy import copy
 from functools import partial
 from .connection import get_collection, get_database
 from .utils import is_field
-from .fields import ObjectIdField, ValidationError, Field
+from .fields import ObjectIdField, ValidationError, Field, DictField
 from .utils import rget_subclasses
 
 
@@ -99,6 +99,10 @@ class Document(object):
         for name, field in self.fields.iteritems():
             if field.required and not field.name in self.data:
                 missing_fields.append(field.name)
+            if isinstance(field, DictField):
+                d = getattr(self, field.name, {})
+                if isinstance(d, rget_subclasses(EmbeddedDocument)):
+                    d.validate()
 
         if missing_fields:
             raise ValidationError(
@@ -180,3 +184,62 @@ class Document(object):
         else:
             document = doc_type(**doc)
         return document
+
+
+class MetaEmbedded(type):
+
+    def __new__(cls, clsname, bases, attrs):
+        attrs["_type"] = Field(basestring, default=clsname)
+        for name, value in attrs.iteritems():
+            if is_field(value):
+                value.__dict__["name"] = name
+
+        def __init__(self, *args, **kwargs):
+            self._data = {}
+            for name, value in kwargs.iteritems():
+                setattr(self, name, value)
+            for name, field in self.fields.iteritems():
+                if field.default is not None:
+                    defl = (copy(field.default) if not callable(field.default)
+                            else field.default())
+                    self._data.setdefault(name, defl)
+
+        attrs["__init__"] = __init__
+
+        return super(MetaDocument, cls).__new__(cls, clsname, bases, attrs)
+
+
+class EmbeddedDocument(object):
+
+    __metaclass__ = MetaEmbedded
+
+    @property
+    def fields(self):
+        '''Returns all fields from baseclasses to allow for field
+        inheritence. Collects fields top down ensuring that fields
+        are properly overriden by subclasses.'''
+
+        attrs = {}
+        for obj in reversed(self.__class__.__mro__):
+            attrs.update(obj.__dict__)
+        return dict((k, v) for k, v in attrs.iteritems() if is_field(v))
+
+    @property
+    def data(self):
+        return self._data
+
+    @data.setter
+    def data(self, data):
+        for name, value in data.iteritems():
+            setattr(self, name, value)
+
+    def validate(self):
+        '''Ensure all required fields are in data.'''
+        missing_fields = []
+        for name, field in self.fields.iteritems():
+            if field.required and not field.name in self.data:
+                missing_fields.append(field.name)
+
+        if missing_fields:
+            raise ValidationError(
+                "{} missing fields: {}".format(self.name, missing_fields))

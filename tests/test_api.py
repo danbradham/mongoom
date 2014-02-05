@@ -1,6 +1,7 @@
 from nose.tools import ok_, eq_, raises
 from pymongorm import (Document, Field, ListField, RefField, ListRefField,
-                     connect, get_connection, get_database, ValidationError)
+                       DictField, ListDictField, connect, get_connection,
+                       get_database, ValidationError)
 from bson.objectid import ObjectId
 from datetime import datetime
 

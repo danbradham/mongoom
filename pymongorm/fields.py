@@ -48,6 +48,20 @@ class BaseField(object):
             raise ValidationError(
                 "{} must be of types: {}.".format(self.name, self.types))
 
+    def to_dict(self, value):
+        '''Make sure that the value is a dictionary, if it is an
+        EmbeddedDocument, pull the documents data.'''
+        if not isinstance(value, dict):
+            value = value.data
+        return value
+
+    def to_ref(self, value):
+        '''Make sure that the value is a dictionary, if it is an
+        EmbeddedDocument, pull the documents data.'''
+        if not isinstance(value, DBRef):
+            value = value.ref
+        return value
+
 
 # Use Field not BaseField for clarity. Use BaseField only as a super.
 Field = type("Field", (BaseField,), {})
@@ -69,11 +83,7 @@ class RefField(BaseField):
         return self
 
     def __set__(self, inst, value):
-        try:
-            self.validate(value)
-        except ValidationError:
-            value = value.ref
-        inst._data[self.name] = value
+        inst._data[self.name] = self.to_ref(value)
 
 
 class ObjectIdField(BaseField):
@@ -139,9 +149,7 @@ class ListRefField(ListField):
         super(ListRefField, self).__init__(DBRef, **kwargs)
 
     def __setitem__(self, key, value):
-        if not value in self.types:
-            value = value.ref
-        super(ListRefField, self).__setitem__(key, value)
+        super(ListRefField, self).__setitem__(key, self.to_ref(value))
 
     def __getitem__(self, key):
         ref = self._value[key]
@@ -162,12 +170,94 @@ class ListRefField(ListField):
         return self._value
 
     def append(self, value):
-        try:
-            self.validate(value)
-        except ValidationError:
-            value = value.ref
-        self._value.append(value)
+        self._value.append(self.to_ref(value))
 
     def extend(self, values):
         for value in values:
             self.append(value)
+
+
+class DictField(BaseField):
+    '''A dict field that supports standard dictionaries. If a subclass of
+    EmbeddedDocument is provided they will automatically be encoded and decoded
+    by __set__ and __get__ respectively.'''
+
+    def __init__(self, *types, **kwargs):
+        kwargs["default"] = dict
+        self.doc_types = dict((typ.__name__, typ) for typ in types)
+        super(ListRefField, self).__init__(dict, **kwargs)
+
+    def __set__(self, inst, value):
+        inst._data[self.name] = self.to_dict(value)
+
+    def __get__(self, inst, cls):
+        if inst:
+            data = inst._data[self.name]
+            if "_type" in data:
+                doc_type = self.doc_types.get(
+                    data["_type"],
+                    getattr(sys.modules["__main__"], data["_type"], None))
+                return doc_type(**data)
+            return data
+        return self
+
+
+class ListDictField(SelfishField):
+    '''A descriptor that '''
+
+    def __init__(self, *types, **kwargs):
+        kwargs["default"] = list
+        self.doc_types = dict((typ.__name__, typ) for typ in types)
+        super(ListField, self).__init__(dict, **kwargs)
+
+    def __set__(self, inst, value):
+        if not isinstance(value, list):
+            raise ValidationError("Must be a list.")
+        for item in value:
+            self.validate(item)
+        self._value = value
+        inst._data[self.name] = value
+
+    def __getitem__(self, key):
+        data = self._value[key]
+        if "_type" in data:
+            doc_type = self.doc_types.get(
+                data["_type"],
+                getattr(sys.modules["__main__"], data["_type"], None))
+            return doc_type(**data)
+        return data
+
+    def __setitem__(self, key, value):
+        self._value[key] = self.to_dict(value)
+        return self._value
+
+    def __iadd__(self, value):
+        if isinstance(value, Iterable):
+            self.extend(value)
+            return self._value
+        self.append(value)
+        return self._value
+
+    def __add__(self, value):
+        self.append(value)
+        return self._value
+
+    def append(self, value):
+        self._value.append(self.to_dict(value))
+
+    def extend(self, values):
+        for value in values:
+            self.append(value)
+
+    def to_dict(self, value):
+        '''Make sure that the value is a dictionary, if it is an
+        EmbeddedDocument, pull the documents data.'''
+        try:
+            self.validate(value)
+        except ValidationError:
+            value = value.data
+        return value
+
+    @property
+    def value(self):
+        return self._value
