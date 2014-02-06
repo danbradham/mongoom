@@ -4,8 +4,9 @@ Python Mongo ORM
 An Object-Relational Mapping for MongoDB. MongORM's highest priority is to be as pythonic as possible. Heavily inspired by Django and MongoEngine, but, attempting to be a bit easier to use. Here's a rather elaborate example of the core functionality:
 
 ```python
-from mongorm import Document, Field, RefField, ListRefField, connect
+from mongorm import Document, Field, ListField, connect
 from datetime import datetime
+
 
 class User(Document):
     _index = {"keys": [("name", 1), ("last_name", 1)], "unique": True}
@@ -13,17 +14,20 @@ class User(Document):
     last_name = Field(basestring, required=True)
     created = Field(datetime, default=datetime.utcnow)
 
+
 class Comment(Document):
-    user = RefField(user, required=True)
+    user = Field(User, required=True)
     text = Field(basestring, required=True)
     created = Field(datetime, default=datetime.utcnow)
 
+
 class Project(Document):
     name = Field(basestring, required=True)
-    user = RefField(User, required=True)
+    user = Field(User, required=True)
     created = Field(datetime, default=datetime.utcnow)
     description = Field(basestring)
-    comments = ListRefField(Comment)
+    comments = ListField(Comment)
+
 
 if __name__ == "__main__":
     connect("test_db", "localhost", 27017)
@@ -50,7 +54,7 @@ if __name__ == "__main__":
               "Mr. Edison's ideas, this too will be proven impractical"),
         ).save()
 
-    bulb.comments += rude_comment  # iadd operator on ListRefFields automatically appends or extends DBRefs
+    bulb.comments += rude_comment  # iadd operator on ListFields automatically appends or extends DBRefs
     bulb.save()
 
 ```

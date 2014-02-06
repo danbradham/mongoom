@@ -1,7 +1,8 @@
 from nose.tools import ok_, eq_, raises
 from pymongorm import (Document, Field, ListField, connect, get_connection,
-                       get_database, ValidationError)
+                       get_database, ValidationError, EmbeddedDocument)
 from bson.objectid import ObjectId
+from bson import DBRef
 from datetime import datetime
 
 connect("test_db", "localhost", 27017)
@@ -37,6 +38,17 @@ class Container(Document):
     created = Field(datetime, default=datetime.utcnow)
     components = ListField(Component)
     images = ListField(basestring)
+
+
+class CheckListItem(EmbeddedDocument):
+    text = Field(basestring)
+    checked = Field(bool, default=False)
+
+
+class CheckList(Document):
+    title = Field(basestring)
+    user = Field(User)
+    items = ListField(CheckListItem)
 
 
 def test_connect():
@@ -120,7 +132,6 @@ def test_missing_required():
 
 def test_RefField():
     '''RefField'''
-    from pprint import pprint
     c = get_connection()
     c.drop_database("test_db")
 
@@ -159,8 +170,8 @@ def test_ListField():
     eq_(project_a.images[1:], ["path/to/image2", "path/to/image3"])
 
 
-def test_ListRefField():
-    '''ListRefField'''
+def test_deref():
+    '''Test dereferencing of ListField descriptor'''
     c = get_connection()
     c.drop_database("test_db")
 
@@ -195,6 +206,45 @@ def test_ListRefField():
 
     ok_(all(isinstance(v, Version) for v in model_a.versions))
     ok_(all(isinstance(c, Component) for c in asset_a.components))
+
+
+def test_ref():
+    '''Test Reference ability of Field and ListField'''
+    connect("test_db")
+    c = get_connection()
+    c.drop_database("test_db")
+
+    user_a = User(name="User", last_name="A").save()
+    comp_a = Container(name="Component A", user=user_a).save()
+    comp_b = Component(name="Component B", user=user_a).save()
+    comp_a.components += comp_b
+    comp_a.save()
+
+    ok_(isinstance(comp_a._data['user'], DBRef))
+    ok_(all(isinstance(c, DBRef) for c in comp_a._data['components']))
+
+
+def test_embed():
+    '''Test Embedded Document'''
+
+    connect("test_db")
+    c = get_connection()
+    c.drop_database("test_db")
+
+    user_a = User(name="User", last_name="A").save()
+    clist = CheckList(title="New Checklist", user=user_a).save()
+    clist_item_a = CheckListItem(text="Item A")
+
+    clist.items += clist_item_a
+    clist.save()
+
+    # Change text through clist_item_a's text descriptor
+    clist_item_a.text = "Item A Changed"
+    eq_(clist._data["items"][0]["text"], "Item A Changed")
+
+    # Change text through __getitem__ access
+    clist.items[0].text = "Item A Changed Twice"
+    eq_(clist._data["items"][0]["text"], "Item A Changed Twice")
 
 
 def test_index():
