@@ -36,7 +36,7 @@ class Container(Document):
     user = Field(User)
     created = Field(datetime, default=datetime.utcnow)
     components = ListField(Component)
-    images = ListField()
+    images = ListField(basestring)
 
 
 def test_connect():
