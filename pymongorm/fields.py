@@ -50,21 +50,24 @@ class BaseField(object):
                 "{} must be of types: {}.".format(self.name, self.types))
 
     def to_dict(self, value):
-        '''Make sure that the value is a dictionary, if it is an
-        EmbeddedDocument, pull the documents data.'''
+        '''Make sure that the value is a dictionary. If value is an
+        :class:`EmbeddedDocument`, pull the documents data.'''
+
         if not isinstance(value, dict):
             value = value.data
         return value
 
     def to_ref(self, value):
-        '''Make sure that the value is a dictionary, if it is an
-        EmbeddedDocument, pull the documents data.'''
+        '''Make sure that the value is a :class:`DBRef`. If value is a
+        :class:`Document` object, pull the documents ref.'''
+
         if not isinstance(value, DBRef):
             value = value.ref
         return value
 
     def from_dict(self, value):
-        '''Decodes a dict object.'''
+        '''Decodes a dict object to an :class:`EmbeddedDocument`.'''
+
         if "_type" in value:
             doc_type = self.doc_types.get(
                 value["_type"],
@@ -73,7 +76,8 @@ class BaseField(object):
         return value
 
     def from_ref(self, value):
-        '''Decodes a DBRef.'''
+        '''Returns a :class:`Document` from a :class:`DBRef`.'''
+
         doc_type = self.doc_types.get(
             value.collection,
             getattr(sys.modules["__main__"], value.collection, None))
@@ -112,7 +116,7 @@ class Field(BaseField):
 
 
 class ObjectIdField(BaseField):
-    '''A convenience field, exactly the same as Field(ObjectId)'''
+    '''A convenience field, exactly the same as :class:`Field`(ObjectId)'''
 
     def __init__(self, **kwargs):
         super(ObjectIdField, self).__init__(ObjectId, **kwargs)
@@ -125,7 +129,7 @@ class SelfishField(BaseField):
     descriptor, attribute lookup is directed back toward the data
     object that we're acting on. One drawback is that we always return a
     descriptor object on lookup and not a standard python object. To access
-    the python object the value property has been introduced.'''
+    the underlying python object the value property has been introduced.'''
 
     def __init__(self, *types, **kwargs):
         self._value = None

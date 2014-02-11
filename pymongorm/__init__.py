@@ -5,4 +5,4 @@ from .connection import connect, get_connection, get_database
 from .events import fire, Event
 from .subscriber import Subscriber
 
-__version__ = "0.1a"
+__version__ = "0.1.1"

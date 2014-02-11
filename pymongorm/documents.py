@@ -18,6 +18,13 @@ def cache_ref_deleted(cls, wref):
 
 
 class MetaDocument(type):
+    '''Metaclass for all :class:`Document` objects. Automatically sets
+    :class:`BaseField` name attributes to their referenced name.
+
+    :attribute _type: :class:`BaseField`(basestring, default=clsname)
+    :attribute _id: :class:`ObjectIdField`
+    :attribute __cache__: ObjectId to :class:`Document` object hash
+    '''
 
     def __new__(cls, clsname, bases, attrs):
         attrs["_type"] = BaseField(basestring, default=clsname)
@@ -25,37 +32,39 @@ class MetaDocument(type):
         attrs["__cache__"] = {}
         for name, value in attrs.iteritems():
             if is_field(value):
+                # Set each field's name attribute to their reference name
                 value.__dict__["name"] = name
-
-        def __init__(self, *args, **kwargs):
-            if "_id" in kwargs and not kwargs["_id"] in self.__cache__:
-                self.cache(kwargs["_id"])
-            self._data = {}
-            for name, value in kwargs.iteritems():
-                setattr(self, name, value)
-            for name, field in self.fields.iteritems():
-                if field.default is not None:
-                    defl = (copy(field.default) if not callable(field.default)
-                            else field.default())
-                    self._data.setdefault(name, defl)
-
-        attrs["__init__"] = __init__
 
         return super(MetaDocument, cls).__new__(cls, clsname, bases, attrs)
 
 
 class Document(object):
-    '''Class attributes that are subclasses of BaseField are used to set the
-    defaults of a Document's _data dictionary. The _data dictionary is the data
-    entered into database. All _data is accessible through the data property of
-    a Document, therefore it's imperative that you do not assign a Field to
-    a class attribute named data for subclasses of Document.'''
+    '''Class attributes that are subclasses of BaseField are used to
+    set the defaults of a Document's _data dictionary. The _data dictionary
+    is the data entered into mongodb. All _data is accessible through
+    the data property of a Document, therefore it's imperative that you
+    do not assign a Field to a class attribute named data for subclasses
+    of Document.
+    '''
 
     __metaclass__ = MetaDocument
+
+    def __init__(self, *args, **kwargs):
+        if "_id" in kwargs and not kwargs["_id"] in self.__cache__:
+            self.cache(kwargs["_id"])  # Add instance to cache
+        self._data = {}
+        for name, value in kwargs.iteritems():
+            setattr(self, name, value)
+        for name, field in self.fields.iteritems():
+            if field.default is not None:
+                defl = (copy(field.default) if not callable(field.default)
+                        else field.default())
+                self._data.setdefault(name, defl)
 
     @property
     def ref(self):
         '''Returns a DBRef, saves before returning if _id not in data.'''
+
         if not "_id" in self.data:
             self.save()
         return DBRef(self._type, self._id)
@@ -63,8 +72,9 @@ class Document(object):
     @property
     def fields(self):
         '''Returns all fields from baseclasses to allow for field
-        inheritence. Collects fields top down ensuring that fields are properly
-        overriden by subclasses.'''
+        inheritence. Collects fields top down ensuring that fields are
+        properly overriden by subclasses.
+        '''
 
         attrs = {}
         for obj in reversed(self.__class__.__mro__):
@@ -81,20 +91,24 @@ class Document(object):
             setattr(self, name, value)
 
     def cache(self, _id):
-        '''Document cache, used to ensure that only one object mapped to a db
-        document is in memory at any given time.'''
+        '''Document cache, used to ensure that only one object mapped
+        to a db document is in memory at any given time.
+        '''
+
         self.__cache__[_id] = weakref.ref(
             self, partial(cache_ref_deleted, self.__class__))
 
     @classmethod
     def get_cache(cls, _id):
         '''Returns a python object if the _id is cached in memory'''
+
         ref = cls.__cache__.get(_id)
         if ref:
             return ref()
 
     def validate(self):
         '''Ensure all required fields are in data.'''
+
         missing_fields = []
         for name, field in self.fields.iteritems():
             if field.required and not field.name in self.data:
@@ -106,6 +120,7 @@ class Document(object):
 
     def save(self, *args, **kwargs):
         '''Write _data dict to database.'''
+
         col = get_collection(self.index(), self.collection())
         self.validate()
         if not "_id" in self.data:  # No id...insert document
@@ -119,6 +134,7 @@ class Document(object):
     def generate_objects(cls, cursor):
         '''Generator that returns all documents from a pymongo cursor as their
         equivalent python class'''
+
         for doc in cursor:
             if doc["_id"] in cls.__cache__:
                 document = cls.get_cache(doc["_id"])
@@ -129,7 +145,12 @@ class Document(object):
 
     @classmethod
     def find(cls, decode=True, **spec):
-        '''Find objects in a classes collection.'''
+        '''Find objects in a classes collection.
+
+        :param decode: If True, return :class:`Document` objects.
+        :param spec: Key, Value pairs to match in mongodb documents.
+        '''
+
         col = get_collection(cls.index(), cls.collection())
         docs = col.find(spec)
         if not decode:
@@ -138,6 +159,12 @@ class Document(object):
 
     @classmethod
     def find_one(cls, decode=True, **spec):
+        '''Find one object in a classes collection.
+
+        :param decode: If True, return :class:`Document` object.
+        :param spec: Key, Value pairs to match in mongodb documents.
+        '''
+
         col = get_collection(cls.index(), cls.collection())
         doc = col.find_one(spec)
         if not decode:
@@ -150,7 +177,9 @@ class Document(object):
             document = cls(**doc)
         return document
 
-    def remove(self, *args, **kwargs):
+    def remove(self):
+        '''Remove self from mongodb.'''
+
         col = get_collection(self.index(), self.collection())
         if "_id" in self.data:
             col.remove({"_id": self._id})
@@ -158,11 +187,13 @@ class Document(object):
     @classmethod
     def index(cls):
         '''Returns index kwargs used for collection index.'''
+
         return getattr(cls, "_index", None)
 
     @classmethod
     def collection(cls):
         '''Returns collection kwargs used for collection creation.'''
+
         return getattr(cls, "_collection", {"name": cls.__name__})
 
     @classmethod
@@ -183,7 +214,11 @@ class Document(object):
 
 
 class MetaEmbedded(type):
-    '''Metaclass or Type for all embedded documents.'''
+    '''Metaclass for all :class:`EmbeddedDocument` objects. Automatically
+    sets :class:`BaseField` name attributes to their referenced name.
+
+    :attribute _type: :class:`BaseField`(basestring, default=clsname)
+    '''
 
     def __new__(cls, clsname, bases, attrs):
         attrs["_type"] = BaseField(basestring, default=clsname)
@@ -191,34 +226,37 @@ class MetaEmbedded(type):
             if is_field(value):
                 value.__dict__["name"] = name
 
-        def __init__(self, *args, **kwargs):
-            ''':param data: If a kwarg data is provided it is assigned to the
-            _data attribute of the new instance. This allows us to work
-            directly on an object embedded in another documents _data dict.
-            Typically the data kwarg is only passed when decoding an embedded
-            document.'''
-
-            self._data = kwargs.pop("data", {})
-            for name, value in kwargs.iteritems():
-                setattr(self, name, value)
-            for name, field in self.fields.iteritems():
-                if field.default is not None:
-                    defl = (copy(field.default) if not callable(field.default)
-                            else field.default())
-                    self._data.setdefault(name, defl)
-
-        attrs["__init__"] = __init__
-
         return super(MetaEmbedded, cls).__new__(cls, clsname, bases, attrs)
 
 
 class EmbeddedDocument(object):
     '''Baseclass for all embedded documents. Unlike Document objects,
     EmbeddedDocument objects do not have an object id and do not map directly
-    to a collection within a database. They share only the fields and data
-    properties as well as a validate method with Document objects.'''
+    to a collection within a database. Similar to :class:`Document`, but,
+    EmbeddedDocuments do not:
+        * have a cache
+        * have an objectid
+        * have save, find or remove methods...*yet*
+
+
+    :param data: If provided it is assigned to the _data attribute of
+        the new instance, ensuring that the object passed in is exactly the
+        same object that EmbeddedDocument is acting on. Typically only passed
+        when decoding an embedded document as in :class:`BaseField`'s
+        :meth:`from_dict` method.
+    '''
 
     __metaclass__ = MetaEmbedded
+
+    def __init__(self, *args, **kwargs):
+        self._data = kwargs.pop("data", {})
+        for name, value in kwargs.iteritems():
+            setattr(self, name, value)
+        for name, field in self.fields.iteritems():
+            if field.default is not None:
+                defl = (copy(field.default) if not callable(field.default)
+                        else field.default())
+                self._data.setdefault(name, defl)
 
     @property
     def fields(self):

@@ -22,6 +22,12 @@ def get_database():
     return DATABASE
 
 
+def get_connection():
+    '''Get global connection.'''
+    global CONNECTION
+    return CONNECTION
+
+
 def get_collection(index_kwargs=None, coll_kwargs=None):
     '''Gets a collection from index_kwargs and coll_kwargs.
     If a collection does not exist create collection using coll_kwargs.
@@ -47,7 +53,3 @@ def get_collection(index_kwargs=None, coll_kwargs=None):
     return collection
 
 
-def get_connection():
-    '''Get global connection.'''
-    global CONNECTION
-    return CONNECTION
