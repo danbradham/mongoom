@@ -6,11 +6,20 @@ CONNECTION = None
 DATABASE = None
 
 
-def connect(database, host="localhost", port=27017):
-    '''Connect to a database at given host and port.'''
+def connect(database, host="localhost", port=27017, **kwargs):
+    '''Connect to a database at given host and port. Sets two global
+    attributes, CONNECTION and DATABASE.
+
+    Returns a MongoClient object
+
+    :param database: Name of database to use.
+    :param host: Host address
+    :param port: Host port
+    :param kwargs: Extra keyword arguments for :class:`pymongo.mongo_client.MongoClient`'''
+
     global CONNECTION
     global DATABASE
-    c = MongoClient(host, port)
+    c = MongoClient(host, port, **kwargs)
     CONNECTION = c
     DATABASE = c[database]
     return c
@@ -34,9 +43,9 @@ def get_collection(index_kwargs=None, coll_kwargs=None):
     If an index does not exist, ensure an index using index_kwargs.
 
     :param index_kwargs: Dictionary matching the signature of
-        pymongo.database.ensure_index
+        :func:`pymongo.database.ensure_index`.
     :param coll_kwargs: Dictionary matching the signature of
-        pymongo.database.create_collection
+        :func:`pymongo.database.create_collection`
     '''
     global DATABASE
     try:

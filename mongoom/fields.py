@@ -10,10 +10,10 @@ class ValidationError(Exception):
 
 
 class BaseField(object):
-    '''
-    A descriptor that sets and gets data from the _data dict of an object. The
-    name attribute is set in the metaclass of Document, MetaDocument. BaseField
-    should only be used as a Baseclass. Use Field for a basic Field descriptor.
+    '''A descriptor that sets and gets data from the _data dict of an
+    object. The name attribute is set in the metaclass of Document,
+    MetaDocument. BaseField should only be used as a Baseclass. Use
+    :class:`Field` for a basic Field descriptor.
 
     :param types: all args are types for validation
     :param default: default values are copied to inst._data on

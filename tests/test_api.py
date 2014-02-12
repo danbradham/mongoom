@@ -1,11 +1,12 @@
 from nose.tools import ok_, eq_, raises
-from mongoom import (Document, Field, ListField, connect, get_connection,
-                       get_database, ValidationError, EmbeddedDocument)
+from mongoom import *
+from mongoom.fields import ValidationError
+from mongoom.connection import get_connection, get_database
 from bson.objectid import ObjectId
 from bson import DBRef
 from datetime import datetime
 
-connect("test_db", "localhost", 27017)
+C = connect("test_db", "localhost", 27017)
 
 
 class User(Document):
@@ -53,8 +54,7 @@ class CheckList(Document):
 
 def test_connect():
     '''Connection'''
-    c = get_connection()
-    c.drop_database("test_db")
+    C.drop_database("test_db")
 
     eq_(get_database(), c.test_db)
 
@@ -65,8 +65,7 @@ def test_connect():
 
 def test_save():
     '''Save Document'''
-    c = get_connection()
-    c.drop_database("test_db")
+    C.drop_database("test_db")
 
     frank = User(
         name="Frank",
@@ -86,8 +85,7 @@ def test_save():
 
 def test_find_one():
     '''Find One'''
-    c = get_connection()
-    c.drop_database("test_db")
+    C.drop_database("test_db")
 
     c.test_db.User.insert({"name": "Frank", "last_name": "Footer"})
 
@@ -98,8 +96,7 @@ def test_find_one():
 
 def test_find():
     '''Find'''
-    c = get_connection()
-    c.drop_database("test_db")
+    C.drop_database("test_db")
 
     frank = User(
         name="Frank",
@@ -123,8 +120,7 @@ def test_find():
 @raises(ValidationError)
 def test_missing_required():
     '''Missing Required Field'''
-    c = get_connection()
-    c.drop_database("test_db")
+    C.drop_database("test_db")
 
     #Try to save while missing a required field (last_name)
     User(name="Frank").save()
@@ -132,8 +128,7 @@ def test_missing_required():
 
 def test_RefField():
     '''RefField'''
-    c = get_connection()
-    c.drop_database("test_db")
+    C.drop_database("test_db")
 
     frank = User(
         name="Frank",
@@ -149,8 +144,7 @@ def test_RefField():
 
 def test_ListField():
     '''ListField'''
-    c = get_connection()
-    c.drop_database("test_db")
+    C.drop_database("test_db")
 
     frank = User(
         name="Frank",
@@ -172,8 +166,7 @@ def test_ListField():
 
 def test_deref():
     '''Test dereferencing of ListField descriptor'''
-    c = get_connection()
-    c.drop_database("test_db")
+    C.drop_database("test_db")
 
     frank = User(
         name="Frank",
@@ -210,9 +203,7 @@ def test_deref():
 
 def test_ref():
     '''Test Reference ability of Field and ListField'''
-    connect("test_db")
-    c = get_connection()
-    c.drop_database("test_db")
+    C.drop_database("test_db")
 
     user_a = User(name="User", last_name="A").save()
     comp_a = Container(name="Component A", user=user_a).save()
@@ -227,9 +218,7 @@ def test_ref():
 def test_embed():
     '''Test Embedded Document'''
 
-    connect("test_db")
-    c = get_connection()
-    c.drop_database("test_db")
+    C.drop_database("test_db")
 
     user_a = User(name="User", last_name="A").save()
     clist = CheckList(title="New Checklist", user=user_a).save()
@@ -248,7 +237,7 @@ def test_embed():
 
 
 def test_index():
-    db = get_database()
+    db = C["test_db"]
     index_kwargs = User.index()
     index_name = "_".join(
         [str(item) for key in index_kwargs["key_or_list"] for item in key])

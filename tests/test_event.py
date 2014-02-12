@@ -1,7 +1,6 @@
-from mongoom import connect, fire, Event, Document, Field, get_connection
+from mongoom import *
 
-connect("test_db")
-c = get_connection()
+c = connect("test_db")
 c.drop_database("test_db")
 
 class User(Document):
