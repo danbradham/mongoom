@@ -58,7 +58,7 @@ class BaseField(object):
         return value
 
     def to_ref(self, value):
-        '''Make sure that the value is a :class:`DBRef`. If value is a
+        '''Make sure that the value is a :class:`bson.dbref.DBRef`. If value is a
         :class:`Document` object, pull the documents ref.'''
 
         if not isinstance(value, DBRef):
@@ -72,11 +72,11 @@ class BaseField(object):
             doc_type = self.doc_types.get(
                 value["_type"],
                 getattr(sys.modules["__main__"], value["_type"], None))
-            return doc_type(from=value)
+            return doc_type(use_data=value)
         return value
 
     def from_ref(self, value):
-        '''Returns a :class:`Document` from a :class:`DBRef`.'''
+        '''Returns a :class:`Document` from a :class:`bson.dbref.DBRef`.'''
 
         doc_type = self.doc_types.get(
             value.collection,
@@ -86,18 +86,21 @@ class BaseField(object):
 
 class Field(BaseField):
     '''A multipurpose field supporting python standard types. This is the
-    go to field for basestrings, booleans, ints, floats, dicts and also
-    supports DBRefs, and EmbeddedDocuments. DBRefs are automatically
-    stored as a DBRef and decoded as a python object. Similarly
-    EmbeddedDocuments are stored as dicts and decoded as python objects.
+    go to field for basestring, boolean, int, float, dict and also
+    supports :class:`Document`, and :class:`EmbeddedDocument`.
+    :class:`Document` objects are automatically stored as
+    :class:`bson.dbref.DBRef` and decoded back to :class:`Document`. Similarly
+    :class:`EmbeddedDocument` objects are stored as dicts and decoded back to
+    :class:`EmbeddedDocument`.
 
     :param types: all args are types for validation
     :param default: default values are copied to inst._data on
-           instantiation, can be a callable.
+        instantiation, can be a callable.
     :param required: is the field requried?
-    :param name: name of the attribute that field is assigned to.
-        (When used in classes inheriting from Document, you don't need to set
-         the name parameter.)'''
+    :param name: name of the attribute that field is assigned to. (When
+        used in classes inheriting from Document, you don't need to set
+        the name parameter.)
+    '''
 
     def __init__(self, *types, **kwargs):
         self.encode, self.decode = None, None
@@ -161,16 +164,18 @@ class SelfishField(BaseField):
 
 
 class ListField(SelfishField):
-    '''A ListField! Supports multiple types like a Field descriptor, and the
-    same automatic encoding and decoding of DBRefs and EmbeddedDocuments.
+    '''A :class:`ListField`! Supports multiple types like a :class:`Field`
+    descriptor, and the same automatic encoding and decoding of
+    :class:`bson.dbref.DBRef` and :class:`EmbeddedDocument`.
 
     :param types: all args are types for validation
     :param default: default values are copied to inst._data on
-           instantiation, can be a callable.
+        instantiation, can be a callable.
     :param required: is the field requried?
-    :param name: name of the attribute that field is assigned to.
-        (When used in classes inheriting from Document, you don't need to set
-         the name parameter.)'''
+    :param name: name of the attribute that field is assigned to. (When
+        used in classes inheriting from Document, you don't need to set
+        the name parameter.)
+    '''
 
     def __init__(self, *types, **kwargs):
         kwargs["default"] = list

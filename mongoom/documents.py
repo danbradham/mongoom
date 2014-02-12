@@ -18,12 +18,14 @@ def cache_ref_deleted(cls, wref):
 
 
 class MetaDocument(type):
-    '''Metaclass for all :class:`Document` objects. Automatically sets
-    :class:`BaseField` name attributes to their referenced name.
+    '''Metaclass for all :class:`Document` objects.
+    Automatically sets :class:`BaseField` name attributes
+    to their referenced name.
 
     :attr _type: :class:`BaseField`(basestring, default=clsname)
     :attr _id: :class:`ObjectIdField`
-    :attr __cache__: ObjectId to :class:`Document` object hash
+    :attr __cache__: ObjectId to :class:`Document`
+        object hash
     '''
 
     def __new__(cls, clsname, bases, attrs):
@@ -39,10 +41,10 @@ class MetaDocument(type):
 
 
 class Document(object):
-    '''A MongoDB document mapping. A Document's Schema is defined by it's
-    class attributes that are Field instances.
+    '''A MongoDB document mapping.  A :class:`Document` schema is defined by it's class attributes referencing :class:`Field` instances.
 
-    :param data: Field name, value pairs for a MongoDB document.
+    :param data: MongoDB document.
+    :type data: Packed or unpacked dictionary
 
     Usage::
 
@@ -77,7 +79,7 @@ class Document(object):
     @property
     def fields(self):
         '''Returns all fields from baseclasses to allow for field
-        inheritence. Collects fields top down ensuring that fields are
+        inheritence.  Collects fields top down ensuring that fields are
         properly overriden by subclasses.
         '''
 
@@ -88,6 +90,11 @@ class Document(object):
 
     @property
     def data(self):
+        '''The documents data dictionary.
+
+        :getter: Returns the objects _data.
+        :setter: Updates the objects fields based on the provided dictionary.
+        '''
         return self._data
 
     @data.setter
@@ -96,23 +103,21 @@ class Document(object):
             setattr(self, name, value)
 
     def cache(self, _id):
-        '''Document cache, used to ensure that only one object mapped
-        to a db document is in memory at any given time.
-        '''
+        '''Cache a Document object by it's _id field.'''
 
         self.__cache__[_id] = weakref.ref(
             self, partial(cache_ref_deleted, self.__class__))
 
     @classmethod
     def get_cache(cls, _id):
-        '''Returns a python object if the _id is cached in memory'''
+        '''Returns a python object if the _id is in __cache__.'''
 
         ref = cls.__cache__.get(_id)
         if ref:
             return ref()
 
     def validate(self):
-        '''Ensure all required fields are in data.'''
+        '''Ensure all required fields are in _data.'''
 
         missing_fields = []
         for name, field in self.fields.iteritems():
@@ -124,7 +129,10 @@ class Document(object):
                 "{} missing fields: {}".format(self.name, missing_fields))
 
     def save(self, *args, **kwargs):
-        '''Write _data dict to database.'''
+        '''Write _data dict to database.
+
+        Accepts the same parameters as :meth:`pymongo.collection.insert` and
+        :meth:`pymongo.collection.update`'''
 
         col = get_collection(self.index(), self.collection())
         self.validate()
@@ -138,7 +146,9 @@ class Document(object):
     @classmethod
     def generate_objects(cls, cursor):
         '''Generator that returns all documents from a pymongo cursor as their
-        equivalent python class'''
+        equivalent python class.
+
+        :param cursor: A :class:`pymongo.cursor.Cursor`'''
 
         for doc in cursor:
             if doc["_id"] in cls.__cache__:
@@ -152,7 +162,8 @@ class Document(object):
     def find(cls, decode=True, **spec):
         '''Find objects in a classes collection.
 
-        :param decode: If True, return :class:`Document` objects.
+        :param decode: If True, return :class:`Document`
+            objects.
         :param spec: Key, Value pairs to match in mongodb documents.
         '''
 
@@ -166,7 +177,8 @@ class Document(object):
     def find_one(cls, decode=True, **spec):
         '''Find one object in a classes collection.
 
-        :param decode: If True, return :class:`Document` object.
+        :param decode: If True, return :class:`Document`
+            object.
         :param spec: Key, Value pairs to match in mongodb documents.
         '''
 
@@ -183,7 +195,7 @@ class Document(object):
         return document
 
     def remove(self):
-        '''Remove self from mongodb.'''
+        '''Remove Document from database.'''
 
         col = get_collection(self.index(), self.collection())
         if "_id" in self.data:
@@ -219,8 +231,9 @@ class Document(object):
 
 
 class MetaEmbedded(type):
-    '''Metaclass for all :class:`EmbeddedDocument` objects. Automatically
-    sets :class:`BaseField` name attributes to their referenced name.
+    '''Metaclass for all :class:`EmbeddedDocument` objects.
+    Automatically sets :class:`BaseField` name attributes to
+    their referenced name.
 
     :attr _type: :class:`BaseField`(basestring, default=clsname)
     '''
@@ -235,17 +248,19 @@ class MetaEmbedded(type):
 
 
 class EmbeddedDocument(object):
-    '''Baseclass for all embedded documents. Unlike :class:`Document`,
+    '''Baseclass for all embedded documents.
+    Unlike :class:`Document`,
     :class:`EmbeddedDocument` does not:
         * have a cache
         * have an objectid
         * have save, find or remove methods...*yet*
         * map to a collection
 
-
-    :param from: If provided it is assigned to the _data attribute of
+    :param data: MongoDB document.
+    :type data: Packed or unpacked dictionary
+    :param use_data: If provided it is assigned to the _data attribute of
         the new instance, ensuring that the object passed in is exactly the
-        same object that EmbeddedDocument is acting on. Typically only passed
+        same object that EmbeddedDocument is acting on.  Typically only passed
         when decoding an embedded document as in :class:`BaseField`'s
         :meth:`from_dict` method.
 
@@ -261,7 +276,7 @@ class EmbeddedDocument(object):
     __metaclass__ = MetaEmbedded
 
     def __init__(self, **data):
-        self._data = data.pop("from", {})
+        self._data = data.pop("use_data", {})
         for name, value in data.iteritems():
             setattr(self, name, value)
         for name, field in self.fields.iteritems():
@@ -273,7 +288,7 @@ class EmbeddedDocument(object):
     @property
     def fields(self):
         '''Returns all fields from baseclasses to allow for field
-        inheritence. Collects fields top down ensuring that fields
+        inheritence.  Collects fields top down ensuring that fields
         are properly overriden by subclasses.'''
 
         attrs = {}

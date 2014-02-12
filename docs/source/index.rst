@@ -13,7 +13,7 @@ Stay Pythonic while working with MongoDB. Mongoom provides a light-weight api fo
 Features
 ========
 
-- Encoding and Decoding of documents.
+- Encode and Decode MongoDB documents
 - Active Validation
 - Document based Events
 - Threaded Subscriber
@@ -22,7 +22,7 @@ Features
 Using Mongoom is simple!
 ========================
 
-Inherit from Document and EmbeddedDocument to define a schema.
+Inherit from :class:`Document` and :class:`EmbeddedDocument` to define a schema.
 
 ::
 
@@ -48,7 +48,7 @@ Inherit from Document and EmbeddedDocument to define a schema.
         comments = ListField(Comment)
 
 
-Establish a connection and save some documents.
+Establish a connection and save some :class:`Document` objects.
 
 ::
 
@@ -80,7 +80,7 @@ Establish a connection and save some documents.
     bulb.save()
 
 
-Retrieve and modify a Document.
+Retrieve and modify a :class:`Document`.
 
 ::
 
@@ -93,7 +93,7 @@ Retrieve and modify a Document.
     bulb.save()
 
 
-Also included with Mongoom is an :class:`Event` and :class:`Subscriber`. Event objects are nothing more than a Document object residing in a capped collection. While subscribers are tailable cursors awaiting data to be entered into a capped collection. Using these two objects we can easily create a simple event handling system:
+Also included with Mongoom is an :class:`Event` and :class:`Subscriber`. :class:`Event` objects are nothing more than a :class:`Document` object residing in a capped collection. While class:`Subscriber` objects are tailable cursors awaiting data to be entered into a capped collection. Using these two objects we can easily create a simple event handling system:
 
 ::
 

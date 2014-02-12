@@ -13,8 +13,9 @@ def connect(database, host="localhost", port=27017, **kwargs):
     :param database: Name of database to use.
     :param host: Host address
     :param port: Host port
-    :param kwargs: Extra keyword arguments for :class:`pymongo.mongo_client.MongoClient`
-    :return: `pymongo.mongo_client.MongoClient` instance.
+    :param kwargs: Extra keyword arguments for
+        :class:`pymongo.mongo_client.MongoClient`
+    :return: :class:`pymongo.mongo_client.MongoClient` instance.
 
     Usage::
 

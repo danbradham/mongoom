@@ -3,8 +3,7 @@ monkey.patch_all()
 from collections import defaultdict
 from datetime import datetime
 import functools
-from pymongorm import (connect, get_connection, Subscriber,
-                       Event, fire, Document, Field)
+from mongoom import connect, Subscriber, Event, fire, Document, Field
 from pprint import pprint
 from random import choice
 from time import sleep
@@ -71,8 +70,7 @@ def on_create(document):
 
 
 if __name__ == "__main__":
-    connect("test_db")
-    c = get_connection()
+    c = connect("test_db")
     c.drop_database("test_db")
 
     fire(Event)  # Fire a blank Event to initialize capped collection

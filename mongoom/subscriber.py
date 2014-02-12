@@ -12,6 +12,11 @@ class Subscriber(Thread):
     :param collection: Database collection to be subscribed to.
     :param *args: standard thread arguments.
     :param **kwargs: standard thread keyword arguments.
+
+    Usage::
+
+        mySubscriber = Subscriber("Event")
+        mySubscriber.start()
     '''
 
     def __init__(self, collection, *args, **kwargs):
@@ -30,13 +35,16 @@ class Subscriber(Thread):
 
     def decode(self, doc):
         '''Decode event document on receiving a doc from tailable cursor.
-        Requires all Document subclasses to be imported into the "__main__"
-        module.'''
+        Requires all :class:`Document` subclasses to be
+        imported into the "__main__" module.
+        '''
 
         doc_type = getattr(sys.modules["__main__"], doc["_type"])
         document = doc_type(**doc)
         self.handle(document)
 
     def handle(self, document):
-        '''What do you want to do with the decoded document?'''
+        '''What do you want to do with the
+        :class:`Document`?
+        '''
         pass
