@@ -41,7 +41,8 @@ class MetaDocument(type):
 
 
 class Document(object):
-    '''A MongoDB document mapping.  A :class:`Document` schema is defined by it's class attributes referencing :class:`Field` instances.
+    '''A MongoDB document mapping.  A :class:`Document` schema is defined by
+    it's class attributes referencing :class:`Field` instances.
 
     :param data: MongoDB document.
     :type data: Packed or unpacked dictionary

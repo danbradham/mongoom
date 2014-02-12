@@ -93,7 +93,7 @@ Retrieve and modify a :class:`Document`.
     bulb.save()
 
 
-Also included with Mongoom is an :class:`Event` and :class:`Subscriber`. :class:`Event` objects are nothing more than a :class:`Document` object residing in a capped collection. While class:`Subscriber` objects are tailable cursors awaiting data to be entered into a capped collection. Using these two objects we can easily create a simple event handling system:
+Also included with Mongoom is an :class:`Event` and :class:`Subscriber`. :class:`Event` objects are nothing more than a :class:`Document` object residing in a capped collection. While :class:`Subscriber` objects are tailable cursors awaiting data to be entered into a capped collection. Using these two objects we can easily create a simple event handling system:
 
 ::
 
