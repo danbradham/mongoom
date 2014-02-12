@@ -1,4 +1,4 @@
-from pymongorm import connect, fire, Event, Document, Field, get_connection
+from mongoom import connect, fire, Event, Document, Field, get_connection
 
 connect("test_db")
 c = get_connection()

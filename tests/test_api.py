@@ -1,5 +1,5 @@
 from nose.tools import ok_, eq_, raises
-from pymongorm import (Document, Field, ListField, connect, get_connection,
+from mongoom import (Document, Field, ListField, connect, get_connection,
                        get_database, ValidationError, EmbeddedDocument)
 from bson.objectid import ObjectId
 from bson import DBRef

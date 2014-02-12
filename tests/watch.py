@@ -1,4 +1,4 @@
-from pymongo import Connection
+from mongoom import Connection
 import time
 
 db = Connection().my_db
