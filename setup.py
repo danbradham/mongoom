@@ -4,7 +4,7 @@ except ImportError:
     from setuptools import setup
 from mongoom import __version__
 
-with open("Readme.rst") as f:
+with open("README.rst") as f:
     readme = f.read()
 
 with open("LICENSE") as f:
