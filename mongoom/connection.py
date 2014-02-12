@@ -10,12 +10,16 @@ def connect(database, host="localhost", port=27017, **kwargs):
     '''Connect to a database at given host and port. Sets two global
     attributes, CONNECTION and DATABASE.
 
-    Returns a MongoClient object
-
     :param database: Name of database to use.
     :param host: Host address
     :param port: Host port
-    :param kwargs: Extra keyword arguments for :class:`pymongo.mongo_client.MongoClient`'''
+    :param kwargs: Extra keyword arguments for :class:`pymongo.mongo_client.MongoClient`
+    :return: `pymongo.mongo_client.MongoClient` instance.
+
+    Usage::
+
+        c = connect("test_db", "localhost", 27017)
+    '''
 
     global CONNECTION
     global DATABASE

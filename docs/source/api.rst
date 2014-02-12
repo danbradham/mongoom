@@ -3,7 +3,7 @@
 Essentials
 ==========
 
-.. autoclass:: mongoom.connection.connect
+.. autofunction:: mongoom.connection.connect
 .. autoclass:: mongoom.documents.Document
 .. autoclass:: mongoom.documents.EmbeddedDocument
 .. autoclass:: mongoom.fields.Field

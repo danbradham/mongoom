@@ -72,7 +72,7 @@ class BaseField(object):
             doc_type = self.doc_types.get(
                 value["_type"],
                 getattr(sys.modules["__main__"], value["_type"], None))
-            return doc_type(data=value)
+            return doc_type(from=value)
         return value
 
     def from_ref(self, value):
@@ -89,7 +89,15 @@ class Field(BaseField):
     go to field for basestrings, booleans, ints, floats, dicts and also
     supports DBRefs, and EmbeddedDocuments. DBRefs are automatically
     stored as a DBRef and decoded as a python object. Similarly
-    EmbeddedDocuments are stored as dicts and decoded as python objects.'''
+    EmbeddedDocuments are stored as dicts and decoded as python objects.
+
+    :param types: all args are types for validation
+    :param default: default values are copied to inst._data on
+           instantiation, can be a callable.
+    :param required: is the field requried?
+    :param name: name of the attribute that field is assigned to.
+        (When used in classes inheriting from Document, you don't need to set
+         the name parameter.)'''
 
     def __init__(self, *types, **kwargs):
         self.encode, self.decode = None, None
@@ -116,7 +124,7 @@ class Field(BaseField):
 
 
 class ObjectIdField(BaseField):
-    '''A convenience field, exactly the same as :class:`Field`(ObjectId)'''
+    '''Exactly the same as :class:`Field`(ObjectId)'''
 
     def __init__(self, **kwargs):
         super(ObjectIdField, self).__init__(ObjectId, **kwargs)
@@ -154,7 +162,15 @@ class SelfishField(BaseField):
 
 class ListField(SelfishField):
     '''A ListField! Supports multiple types like a Field descriptor, and the
-    same automatic encoding and decoding of DBRefs and EmbeddedDocuments.'''
+    same automatic encoding and decoding of DBRefs and EmbeddedDocuments.
+
+    :param types: all args are types for validation
+    :param default: default values are copied to inst._data on
+           instantiation, can be a callable.
+    :param required: is the field requried?
+    :param name: name of the attribute that field is assigned to.
+        (When used in classes inheriting from Document, you don't need to set
+         the name parameter.)'''
 
     def __init__(self, *types, **kwargs):
         kwargs["default"] = list

@@ -21,9 +21,9 @@ class MetaDocument(type):
     '''Metaclass for all :class:`Document` objects. Automatically sets
     :class:`BaseField` name attributes to their referenced name.
 
-    :attribute _type: :class:`BaseField`(basestring, default=clsname)
-    :attribute _id: :class:`ObjectIdField`
-    :attribute __cache__: ObjectId to :class:`Document` object hash
+    :attr _type: :class:`BaseField`(basestring, default=clsname)
+    :attr _id: :class:`ObjectIdField`
+    :attr __cache__: ObjectId to :class:`Document` object hash
     '''
 
     def __new__(cls, clsname, bases, attrs):
@@ -39,21 +39,26 @@ class MetaDocument(type):
 
 
 class Document(object):
-    '''Class attributes that are subclasses of BaseField are used to
-    set the defaults of a Document's _data dictionary. The _data dictionary
-    is the data entered into mongodb. All _data is accessible through
-    the data property of a Document, therefore it's imperative that you
-    do not assign a Field to a class attribute named data for subclasses
-    of Document.
+    '''A MongoDB document mapping. A Document's Schema is defined by it's
+    class attributes that are Field instances.
+
+    :param data: Field name, value pairs for a MongoDB document.
+
+    Usage::
+
+        class User(Document):
+            name = Field(basestring)
+
+        frank = User(name="Frank").save()
     '''
 
     __metaclass__ = MetaDocument
 
-    def __init__(self, *args, **kwargs):
-        if "_id" in kwargs and not kwargs["_id"] in self.__cache__:
-            self.cache(kwargs["_id"])  # Add instance to cache
+    def __init__(self, **data):
+        if "_id" in data and not data["_id"] in self.__cache__:
+            self.cache(data["_id"])  # Add instance to cache
         self._data = {}
-        for name, value in kwargs.iteritems():
+        for name, value in data.iteritems():
             setattr(self, name, value)
         for name, field in self.fields.iteritems():
             if field.default is not None:
@@ -186,13 +191,13 @@ class Document(object):
 
     @classmethod
     def index(cls):
-        '''Returns index kwargs used for collection index.'''
+        ''':return: Keyword args used for collection index.'''
 
         return getattr(cls, "_index", None)
 
     @classmethod
     def collection(cls):
-        '''Returns collection kwargs used for collection creation.'''
+        ''':return: Keyword args used for collection creation.'''
 
         return getattr(cls, "_collection", {"name": cls.__name__})
 
@@ -217,7 +222,7 @@ class MetaEmbedded(type):
     '''Metaclass for all :class:`EmbeddedDocument` objects. Automatically
     sets :class:`BaseField` name attributes to their referenced name.
 
-    :attribute _type: :class:`BaseField`(basestring, default=clsname)
+    :attr _type: :class:`BaseField`(basestring, default=clsname)
     '''
 
     def __new__(cls, clsname, bases, attrs):
@@ -238,18 +243,26 @@ class EmbeddedDocument(object):
         * map to a collection
 
 
-    :param data: If provided it is assigned to the _data attribute of
+    :param from: If provided it is assigned to the _data attribute of
         the new instance, ensuring that the object passed in is exactly the
         same object that EmbeddedDocument is acting on. Typically only passed
         when decoding an embedded document as in :class:`BaseField`'s
         :meth:`from_dict` method.
+
+    Usage::
+
+        class Comment(EmbeddedDocument):
+            user = Field("Frank")
+            text = Field(basestring)
+
+        my_comment = Comment(user="Frank", text="Hello there.")
     '''
 
     __metaclass__ = MetaEmbedded
 
-    def __init__(self, *args, **kwargs):
-        self._data = kwargs.pop("data", {})
-        for name, value in kwargs.iteritems():
+    def __init__(self, **data):
+        self._data = data.pop("from", {})
+        for name, value in data.iteritems():
             setattr(self, name, value)
         for name, field in self.fields.iteritems():
             if field.default is not None:
