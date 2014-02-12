@@ -230,13 +230,12 @@ class MetaEmbedded(type):
 
 
 class EmbeddedDocument(object):
-    '''Baseclass for all embedded documents. Unlike Document objects,
-    EmbeddedDocument objects do not have an object id and do not map directly
-    to a collection within a database. Similar to :class:`Document`, but,
-    EmbeddedDocuments do not:
+    '''Baseclass for all embedded documents. Unlike :class:`Document`,
+    :class:`EmbeddedDocument` does not:
         * have a cache
         * have an objectid
         * have save, find or remove methods...*yet*
+        * map to a collection
 
 
     :param data: If provided it is assigned to the _data attribute of
