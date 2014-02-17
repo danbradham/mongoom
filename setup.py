@@ -29,8 +29,8 @@ setup(
     zip_safe=False,
     package_data={"": ["LICENSE"]},
     packages=("mongoom",),
-    requires=("pymongo",),
     package_dir={"mongoom": "mongoom"},
+    requires = ["pymongo"],
     classifiers=(
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
