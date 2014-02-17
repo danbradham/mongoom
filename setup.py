@@ -28,9 +28,9 @@ setup(
     license=license,
     zip_safe=False,
     package_data={"": ["LICENSE"]},
-    packages=("mongoom",),
+    packages=["mongoom"],
     package_dir={"mongoom": "mongoom"},
-    requires = ["pymongo"],
+    install_requires = ["pymongo"],
     classifiers=(
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
