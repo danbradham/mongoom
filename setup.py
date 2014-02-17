@@ -4,7 +4,6 @@ except ImportError:
     from setuptools import setup
 import os
 import sys
-from mongoom import __version__
 
 if sys.argv[-1] == 'cheeseit!':
     os.system('python setup.py sdist upload')
@@ -18,7 +17,7 @@ with open("LICENSE") as f:
 
 setup(
     name="Mongoom",
-    version=__version__,
+    version="0.1.1",
     description="An Object-Mapper for MongoDB.",
     long_description=readme,
     author="Dan Bradham",
