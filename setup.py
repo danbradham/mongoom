@@ -28,8 +28,8 @@ setup(
     license=license,
     zip_safe=False,
     package_data = {"": ["LICENSE"]},
-    packages = ("mongoom"),
-    package_dir = {"mongoom", "mongoom"},
+    packages = ("mongoom",),
+    package_dir = {"mongoom": "mongoom"},
     classifiers = (
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
