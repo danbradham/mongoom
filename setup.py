@@ -16,7 +16,7 @@ with open("LICENSE") as f:
     license = f.read()
 
 setup(
-    name="Mongoom",
+    name="mongoom",
     version="0.1.1",
     description="An Object-Mapper for MongoDB.",
     long_description=readme,
