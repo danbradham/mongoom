@@ -27,10 +27,11 @@ setup(
     include_package_data=True,
     license=license,
     zip_safe=False,
-    package_data = {"": ["LICENSE"]},
-    packages = ("mongoom",),
-    package_dir = {"mongoom": "mongoom"},
-    classifiers = (
+    package_data={"": ["LICENSE"]},
+    packages=("mongoom",),
+    requires=("pymongo",),
+    package_dir={"mongoom": "mongoom"},
+    classifiers=(
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
